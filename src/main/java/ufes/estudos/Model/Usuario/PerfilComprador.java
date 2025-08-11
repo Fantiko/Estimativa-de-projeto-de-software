@@ -17,7 +17,7 @@ public class PerfilComprador extends Usuario {
 
     private double CO2Evitado;
     private double estatisticaDenunciasProcedentes;
-    
+
 
     public PerfilComprador(String nome, String senha, String email, Date dataCriacao, boolean administrador, int totalEstrelas, int nivel, int comprasFinalizadas) {
         super(nome, senha, email, dataCriacao, administrador);
@@ -83,4 +83,4 @@ public class PerfilComprador extends Usuario {
     }
 }
 
-}
+
