@@ -4,20 +4,22 @@ import java.util.Date;
 
 public class Usuario {
     private String nome;
+    private String razaoSocial;
+    private String email;
+    private String telefone;
+    private Date dataCriacao;  //automático
+
+    private String login;
     private String senha;
 
-    private String email;
-
-    private Date dataCriacao;
-
-    private boolean administrador = false;
+    private boolean admin = false;
 
     public Usuario(String nome, String senha, String email, Date dataCriacao, boolean administrador) {
         this.nome = nome;
         this.senha = senha;
         this.email = email;
         this.dataCriacao = dataCriacao;
-        this.administrador = administrador;
+        this.admin = administrador;
     }
 
     public String getNome() {
