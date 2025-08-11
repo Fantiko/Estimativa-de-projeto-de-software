@@ -2,32 +2,36 @@ package ufes.estudos.Model.Usuario;
 
 import ufes.estudos.Model.Item.Item;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class PerfilVendedor extends Usuario{
     private NivelReputacao nivelReputacao;
     private int totalEstrelas;
+    private int vendasConcluidas;
+    private int denunciasRecebidas;
 
-    private int contagemVendasConcluidas;
-    private int numeroDenunciasRecebidas;
-
-    private List<Item> catalogo;
+    private List<String> insignias = new ArrayList<String>();
+    private List<String> selosVisuaisTemporada = new ArrayList<String>();
 
     private double beneficioClimaticoContribuido;
 
+    private List<Item> catalogo;
+
+    private String taxCuradoriaAssociada;
+
     /*TODO:
-    * Lista de insignias
     * Selos visuais de temporada
     * taxonomia de curadoria associadas
     * */
 
-    public PerfilVendedor(String nome, String senha, String email, Date dataCriacao, boolean administrador, NivelReputacao nivelReputacao, int totalEstrelas, int contagemVendasConcluidas, int numeroDenunciasRecebidas) {
+    public PerfilVendedor(String nome, String senha, String email, Date dataCriacao, boolean administrador, NivelReputacao nivelReputacao, int totalEstrelas, int vendasConcluidas, int denunciasRecebidas) {
         super(nome, senha, email, dataCriacao, administrador);
         this.nivelReputacao = nivelReputacao;
         this.totalEstrelas = totalEstrelas;
-        this.contagemVendasConcluidas = contagemVendasConcluidas;
-        this.numeroDenunciasRecebidas = numeroDenunciasRecebidas;
+        this.vendasConcluidas = vendasConcluidas;
+        this.denunciasRecebidas = denunciasRecebidas;
     }
 
     public void adicionarCatalogo(){}
@@ -49,20 +53,20 @@ public class PerfilVendedor extends Usuario{
         this.totalEstrelas = totalEstrelas;
     }
 
-    public int getContagemVendasConcluidas() {
-        return contagemVendasConcluidas;
+    public int getVendasConcluidas() {
+        return vendasConcluidas;
     }
 
-    public void setContagemVendasConcluidas(int contagemVendasConcluidas) {
-        this.contagemVendasConcluidas = contagemVendasConcluidas;
+    public void setVendasConcluidas(int vendasConcluidas) {
+        this.vendasConcluidas = vendasConcluidas;
     }
 
-    public int getNumeroDenunciasRecebidas() {
-        return numeroDenunciasRecebidas;
+    public int getDenunciasRecebidas() {
+        return denunciasRecebidas;
     }
 
     public void setNumeroDenunciasRecebidas(int numeroDenunciasRecebidas) {
-        this.numeroDenunciasRecebidas = numeroDenunciasRecebidas;
+        this.denunciasRecebidas = denunciasRecebidas;
     }
 
     public List<Item> getCatalogo() {
@@ -79,5 +83,13 @@ public class PerfilVendedor extends Usuario{
 
     public void setBeneficioClimaticoContribuido(double beneficioClimaticoContribuido) {
         this.beneficioClimaticoContribuido = beneficioClimaticoContribuido;
+    }
+
+    public List<String> getInsignias() {
+        return insignias;
+    }
+
+    public void setInsignias(List<String> insignias) {
+        this.insignias = insignias;
     }
 }
