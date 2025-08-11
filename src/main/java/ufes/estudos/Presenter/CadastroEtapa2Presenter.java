@@ -3,8 +3,10 @@ package ufes.estudos.Presenter;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.TelaCadastroEtapa1;
 import ufes.estudos.Views.TelaCadastroEtapa2;
+import ufes.estudos.Views.TelaLogin;
 
 import javax.swing.*;
+import java.time.format.DateTimeFormatter;
 
 public class CadastroEtapa2Presenter {
 
@@ -42,11 +44,17 @@ public class CadastroEtapa2Presenter {
         usuario.setEmail(view.getEmail());
         usuario.setTelefone(view.getTelefone());
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+        String dataFormatada = usuario.getDataCriacao().format(formatter);
+
         JOptionPane.showMessageDialog(view,
                 "Cadastro concluído!\nUsuário: " + usuario.getUsuario() +
-                        "\nData de criação: " + usuario.getDataCriacao());
+                        "\nData de criação: " + dataFormatada);
 
         view.dispose();
+        TelaLogin telaLogin = new TelaLogin();
+        new LoginPresenter(telaLogin);
+        telaLogin.setVisible(true);
         // Aqui poderia voltar para a tela de login
     }
 }

@@ -3,7 +3,6 @@ package ufes.estudos.Model.Usuario;
 import ufes.estudos.Model.Item.Item;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class PerfilVendedor extends Usuario{
@@ -22,12 +21,12 @@ public class PerfilVendedor extends Usuario{
     private String taxCuradoriaAssociada;
 
 
-    public PerfilVendedor(String nome, String senha, String email, Date dataCriacao, boolean administrador, NivelReputacao nivelReputacao, int totalEstrelas, int vendasConcluidas, int denunciasRecebidas) {
-        super(nome, senha, email, dataCriacao, administrador);
-        this.nivelReputacao = nivelReputacao;
-        this.totalEstrelas = totalEstrelas;
-        this.vendasConcluidas = vendasConcluidas;
-        this.denunciasRecebidas = denunciasRecebidas;
+    public PerfilVendedor(Usuario usuario) {
+        super(usuario);
+        this.nivelReputacao = NivelReputacao.bronze;
+        this.totalEstrelas = 0;
+        this.vendasConcluidas = 0;
+        this.denunciasRecebidas = 0;
     }
 
     public void adicionarCatalogo(){}
