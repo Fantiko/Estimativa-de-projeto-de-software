@@ -21,10 +21,6 @@ public class PerfilVendedor extends Usuario{
 
     private String taxCuradoriaAssociada;
 
-    /*TODO:
-    * Selos visuais de temporada
-    * taxonomia de curadoria associadas
-    * */
 
     public PerfilVendedor(String nome, String senha, String email, Date dataCriacao, boolean administrador, NivelReputacao nivelReputacao, int totalEstrelas, int vendasConcluidas, int denunciasRecebidas) {
         super(nome, senha, email, dataCriacao, administrador);
@@ -91,5 +87,13 @@ public class PerfilVendedor extends Usuario{
 
     public void setInsignias(List<String> insignias) {
         this.insignias = insignias;
+    }
+
+    public List<String> getSelosVisuaisTemporada() {
+        return selosVisuaisTemporada;
+    }
+
+    public void setSelosVisuaisTemporada(List<String> selosVisuaisTemporada) {
+        this.selosVisuaisTemporada = selosVisuaisTemporada;
     }
 }

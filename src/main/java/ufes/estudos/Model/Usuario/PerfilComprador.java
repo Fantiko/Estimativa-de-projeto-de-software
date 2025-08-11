@@ -1,43 +1,45 @@
 package ufes.estudos.Model.Usuario;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class PerfilComprador extends Usuario {
-    private int estrelasReputacao;
-    private int nivel;
+
+    private int nivelReputacao;
+    private int totalEstrelas;
 
     private int comprasFinalizadas;
 
+    private List<String> insigniasPermanentes = new ArrayList<String>();
+
+    private boolean seloVerificado;
+
     private double CO2Evitado;
-    private double estatisticasDenuncias;
+    private double estatisticaDenunciasProcedentes;
+    
 
-
-    /*TODO:
-    * Insigneas permanentes relativas a ofertas e compras
-    * selo verificador confiavel -> boolean????
-    * */
-
-    public PerfilComprador(String nome, String senha, String email, Date dataCriacao, boolean administrador, int estrelasReputacao, int nivel, int comprasFinalizadas) {
+    public PerfilComprador(String nome, String senha, String email, Date dataCriacao, boolean administrador, int totalEstrelas, int nivel, int comprasFinalizadas) {
         super(nome, senha, email, dataCriacao, administrador);
-        this.estrelasReputacao = estrelasReputacao;
-        this.nivel = nivel;
+        this.totalEstrelas = totalEstrelas;
+        this.nivelReputacao = nivel;
         this.comprasFinalizadas = comprasFinalizadas;
     }
 
-    public int getEstrelasReputacao() {
-        return estrelasReputacao;
+    public int getTotalEstrelas() {
+        return totalEstrelas;
     }
 
-    public void setEstrelasReputacao(int estrelasReputacao) {
-        this.estrelasReputacao = estrelasReputacao;
+    public void setTotalEstrelas(int totalEstrelas) {
+        this.totalEstrelas = totalEstrelas;
     }
 
     public int getNivel() {
-        return nivel;
+        return nivelReputacao;
     }
 
     public void setNivel(int nivel) {
-        this.nivel = nivel;
+        this.nivelReputacao = nivel;
     }
 
     public int getComprasFinalizadas() {
@@ -56,11 +58,29 @@ public class PerfilComprador extends Usuario {
         this.CO2Evitado = CO2Evitado;
     }
 
-    public double getEstatisticasDenuncias() {
-        return estatisticasDenuncias;
+    public List<String> getInsigniasPermanentes() {
+        return insigniasPermanentes;
     }
 
-    public void setEstatisticasDenuncias(double estatisticasDenuncias) {
-        this.estatisticasDenuncias = estatisticasDenuncias;
+    public void setInsigniasPermanentes(List<String> insigniasPermanentes) {
+        this.insigniasPermanentes = insigniasPermanentes;
     }
+
+    public double getEstatisticaDenunciasProcedentes() {
+        return estatisticaDenunciasProcedentes;
+    }
+
+    public void setEstatisticaDenunciasProcedentes(double estatisticaDenunciasProcedentes) {
+        this.estatisticaDenunciasProcedentes = estatisticaDenunciasProcedentes;
+    }
+
+    public boolean isVerificado() {
+        return seloVerificado;
+    }
+
+    public void setSeloVerificado(boolean seloVerificado) {
+        this.seloVerificado = seloVerificado;
+    }
+}
+
 }
