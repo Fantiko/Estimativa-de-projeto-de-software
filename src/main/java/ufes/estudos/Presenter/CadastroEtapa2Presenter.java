@@ -30,8 +30,6 @@ public class CadastroEtapa2Presenter {
         usuario.setRazaoSocial(view.getRazaoSocial());
         usuario.setEmail(view.getEmail());
         usuario.setTelefone(view.getTelefone());
-        usuario.setVendedor(view.isVendedor());
-        usuario.setComprador(view.isComprador());
     }
 
     private void finalizar() {
@@ -43,8 +41,6 @@ public class CadastroEtapa2Presenter {
         usuario.setRazaoSocial(view.getRazaoSocial());
         usuario.setEmail(view.getEmail());
         usuario.setTelefone(view.getTelefone());
-        usuario.setVendedor(view.isVendedor());
-        usuario.setComprador(view.isComprador());
 
         JOptionPane.showMessageDialog(view,
                 "Cadastro concluído!\nUsuário: " + usuario.getUsuario() +
