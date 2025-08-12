@@ -11,8 +11,6 @@ public class TelaCadastroEtapa2 extends JFrame {
     private JTextField campoRazaoSocial;
     private JTextField campoEmail;
     private JTextField campoTelefone;
-    private JCheckBox checkVendedor;
-    private JCheckBox checkComprador;
     private JButton btnVoltar;
     private JButton btnFinalizar;
 
@@ -29,8 +27,6 @@ public class TelaCadastroEtapa2 extends JFrame {
             campoRazaoSocial.setText(usuario.getRazaoSocial());
             campoEmail.setText(usuario.getEmail());
             campoTelefone.setText(usuario.getTelefone());
-            checkVendedor.setSelected(usuario.isVendedor());
-            checkComprador.setSelected(usuario.isComprador());
         }
     }
 
@@ -48,12 +44,7 @@ public class TelaCadastroEtapa2 extends JFrame {
         painelCampos.add(new JLabel("Telefone (opcional):"));
         campoTelefone = new JTextField();
         painelCampos.add(campoTelefone);
-        painelCampos.add(new JLabel("Tipo de Usuário:"));
         JPanel painelChecks = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        checkVendedor = new JCheckBox("Vendedor");
-        checkComprador = new JCheckBox("Comprador");
-        painelChecks.add(checkVendedor);
-        painelChecks.add(checkComprador);
         painelCampos.add(painelChecks);
         JPanel painelBotoes = new JPanel(new BorderLayout());
         btnVoltar = new JButton("Voltar");
@@ -68,8 +59,6 @@ public class TelaCadastroEtapa2 extends JFrame {
     public String getRazaoSocial() { return campoRazaoSocial.getText(); }
     public String getEmail() { return campoEmail.getText(); }
     public String getTelefone() { return campoTelefone.getText(); }
-    public boolean isVendedor() { return checkVendedor.isSelected(); }
-    public boolean isComprador() { return checkComprador.isSelected(); }
     public void setVoltarListener(ActionListener listener) { btnVoltar.addActionListener(listener); }
     public void setFinalizarListener(ActionListener listener) { btnFinalizar.addActionListener(listener); }
 }

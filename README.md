@@ -3,7 +3,7 @@
 - [x] Estrutura do Projeto: Criar um projeto Maven.
 - [x] Linguagem de Programação: Utilizar Java 17.
 - [x] Controle de Versão: Configurar um repositório no GitHub para controle de versões e trabalho em equipe.
-- [ ] Padrão de Arquitetura: Implementar o padrão MVP (Passive View).
+- [x] Padrão de Arquitetura: Implementar o padrão MVP (Passive View).
 - [ ] Tratamento de Exceções: Aplicar tratamento de exceções em todo o projeto.
 
 ## 2. Módulos e Dependências Externas

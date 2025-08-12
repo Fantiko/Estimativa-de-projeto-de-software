@@ -1,10 +1,9 @@
 package ufes.estudos.Model.Usuario;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class Usuario {
-    private String nome;
+    private String nomeCompleto;
     private String razaoSocial;
     private String email;
     private String telefone;
@@ -24,15 +23,31 @@ public class Usuario {
         this.dataCriacao = LocalDateTime.now();
     }
 
-    public Usuario(String nome, String senha, String email, Date dataCriacao, boolean administrador) {
+    // CONSTRUTOR CRIADO PARA COPIAR OUTRO USUÁRIO
+    public Usuario(Usuario usuario) {
+        this.nomeCompleto = usuario.nomeCompleto;
+        this.email = usuario.email;
+        this.senha = usuario.senha;
+        this.dataCriacao = usuario.dataCriacao;
+        this.admin = usuario.admin;
+    }
+
+    public Usuario(String usuario, String senha, String telefone, String email, String nomeCompleto) {
+        this.senha = senha;
+        this.usuario = usuario;
+        this.dataCriacao = LocalDateTime.now();
+        this.telefone = telefone;
+        this.email = email;
+        this.razaoSocial = razaoSocial;
+        this.nomeCompleto = nomeCompleto;
     }
 
     public String getNome() {
-        return nome;
+        return nomeCompleto;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setNome(String nomeCompleto) {
+        this.nomeCompleto = this.nomeCompleto;
     }
 
     public String getSenha() {
@@ -91,8 +106,8 @@ public class Usuario {
         this.telefone = telefone;
     }
 
-    public String getDataCriacao() {
-        return dataCriacao.toString();
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
     }
 
 }
