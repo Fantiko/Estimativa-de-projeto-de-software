@@ -1,7 +1,6 @@
 package ufes.estudos.Model.Usuario;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class PerfilComprador extends Usuario {
@@ -19,11 +18,11 @@ public class PerfilComprador extends Usuario {
     private double estatisticaDenunciasProcedentes;
 
 
-    public PerfilComprador(String nome, String senha, String email, Date dataCriacao, boolean administrador, int totalEstrelas, int nivel, int comprasFinalizadas) {
-        super(nome, senha, email, dataCriacao, administrador);
-        this.totalEstrelas = totalEstrelas;
-        this.nivelReputacao = nivel;
-        this.comprasFinalizadas = comprasFinalizadas;
+    public PerfilComprador(Usuario usuario) {
+        super(usuario);
+        this.totalEstrelas = 0;
+        this.nivelReputacao = 0;
+        this.comprasFinalizadas = 0;
     }
 
     public int getTotalEstrelas() {

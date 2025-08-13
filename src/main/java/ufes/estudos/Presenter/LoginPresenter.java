@@ -1,7 +1,15 @@
 package ufes.estudos.Presenter;
 
+import ufes.estudos.Model.State.AdminState;
+import ufes.estudos.Model.State.IMainState;
+import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.ILoginView;
+import ufes.estudos.Views.MainView;
 import ufes.estudos.Views.TelaCadastroEtapa1;
+import ufes.estudos.Views.TelaEscolherPerfil;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class LoginPresenter {
 
@@ -15,15 +23,38 @@ public class LoginPresenter {
     }
 
     private void autenticar() {
-        String usuario = view.getUsuario();
+        String username = view.getUsername();
         String senha = view.getSenha();
 
-        if (usuario.equals("admin") && senha.equals("123")) {
-            view.exibirMensagem("Login realizado com sucesso!");
-            // abrir tela principal aqui se quiser
-        } else {
-            view.exibirMensagem("Usuário ou senha inválidos!");
+        if (username.equals("admin") && senha.equals("123")) {
+            Usuario usuarioLogado = new Usuario("admin", "123", "27992671690",
+                    "userteste@gmail.com", "Ademiro da Silva User");
+
+            abrirTelaAdmin(usuarioLogado);
+
+        } else if (username.equals("user") && senha.equals("123")) {
+            Usuario usuarioLogado = new Usuario("user", "123", "27992671690",
+                    "userteste@gmail.com", "Usuário da Silva User"); //USUÁRIO TEMPORÁRIO PRA TESTES
+
+            abrirTelaEscolhaPerfil(usuarioLogado);
+
+        }else {
+            JOptionPane.showMessageDialog((Component) view, "Login ou senha incorretos!");
         }
+
+
+    }
+
+    private void abrirTelaEscolhaPerfil(Usuario usuarioLogado) {
+        // Fecha a tela de login
+        if (view instanceof JFrame) {
+            ((JFrame) view).dispose();
+        }
+
+        // Abre a tela de escolha de perfil
+        TelaEscolherPerfil telaPerfil = new TelaEscolherPerfil();
+        new EscolherPerfilPresenter(telaPerfil, usuarioLogado);
+        telaPerfil.setVisible(true);
     }
 
     private void abrirTelaCadastro() {
@@ -36,5 +67,20 @@ public class LoginPresenter {
         TelaCadastroEtapa1 telaCadastroEtapa1 = new TelaCadastroEtapa1(null);
         new CadastroEtapa1Presenter(telaCadastroEtapa1, null);
         telaCadastroEtapa1.setVisible(true);
+    }
+
+    private void abrirTelaAdmin(Usuario usuarioLogado){
+        // Fecha a tela de login
+        if (view instanceof javax.swing.JFrame) {
+            ((javax.swing.JFrame) view).dispose();
+        }
+
+        //cria o estado de admin
+        IMainState state = new AdminState();
+
+        MainView view = new MainView();
+        new MainPresenter(view, state, usuarioLogado);
+        view.setVisible(true);
+        // abrir tela principal aqui se quiser
     }
 }

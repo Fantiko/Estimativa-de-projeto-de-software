@@ -47,7 +47,7 @@ public class TelaLogin extends JFrame implements ILoginView {
     }
 
     @Override
-    public String getUsuario() {
+    public String getUsername() {
         return campoUsuario.getText();
     }
 
