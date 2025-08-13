@@ -3,7 +3,7 @@ package ufes.estudos.Views;
 import java.awt.event.ActionListener;
 
 public interface ILoginView {
-    String getUsuario();
+    String getUsername();
     String getSenha();
 
     void setLoginListener(ActionListener listener);
