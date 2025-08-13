@@ -6,22 +6,29 @@ import java.awt.event.ActionListener;
 
 public class MainView extends JFrame implements IMainView {
     private final JLabel lblTitulo;
-    private final JPanel painelMenu;
     private final JButton btnLogout;
+    private final JDesktopPane desktopPane;
 
     public MainView() {
         setLayout(new BorderLayout());
+
+        // Cabeçalho
         lblTitulo = new JLabel("", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Roboto", Font.BOLD, 20));
-
-        painelMenu = new JPanel();
-        btnLogout = new JButton("Logout");
-
         add(lblTitulo, BorderLayout.NORTH);
-        add(painelMenu, BorderLayout.CENTER);
-        add(btnLogout, BorderLayout.SOUTH);
 
-        setSize(600, 400);
+        // Área principal MDI
+        desktopPane = new JDesktopPane();
+        add(desktopPane, BorderLayout.CENTER);
+
+        // Rodapé com botão de logout
+        btnLogout = new JButton("Logout");
+        JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        painelRodape.add(btnLogout);
+        add(painelRodape, BorderLayout.SOUTH);
+
+        // Configurações da janela principal
+        setSize(800, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
@@ -33,29 +40,46 @@ public class MainView extends JFrame implements IMainView {
 
     @Override
     public void exibirMenuVendedor() {
-        painelMenu.removeAll();
-        painelMenu.add(new JButton("Adicionar Anúncio"));
-        painelMenu.add(new JButton("Gerenciar Anúncios"));
-        painelMenu.revalidate();
-        painelMenu.repaint();
+        abrirInternalFrame("Menu Vendedor",
+                new JButton("Adicionar Anúncio"),
+                new JButton("Gerenciar Anúncios")
+        );
     }
 
     @Override
     public void exibirMenuComprador() {
-        painelMenu.removeAll();
-        painelMenu.add(new JButton("Comprar Item"));
-        painelMenu.add(new JButton("Histórico de Compras"));
-        painelMenu.revalidate();
-        painelMenu.repaint();
+        abrirInternalFrame("Menu Comprador",
+                new JButton("Comprar Item"),
+                new JButton("Histórico de Compras")
+        );
     }
 
     @Override
     public void exibirMenuAdmin() {
-        painelMenu.removeAll();
-        painelMenu.add(new JButton("Aprovar Perfis"));
-        painelMenu.add(new JButton("Visualizar Logs"));
-        painelMenu.revalidate();
-        painelMenu.repaint();
+        abrirInternalFrame("Menu Administrador",
+                new JButton("Aprovar Perfis"),
+                new JButton("Visualizar Logs")
+        );
+    }
+
+    private void abrirInternalFrame(String titulo, JComponent... componentes) {
+        JInternalFrame internalFrame = new JInternalFrame(
+                titulo, true, true, true, true
+        );
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        for (JComponent c : componentes) {
+            panel.add(c);
+        }
+
+        internalFrame.add(panel);
+        internalFrame.pack();
+        internalFrame.setVisible(true);
+        desktopPane.add(internalFrame);
+        try {
+            internalFrame.setSelected(true);
+        } catch (Exception ignored) {}
     }
 
     @Override
