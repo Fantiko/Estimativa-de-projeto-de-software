@@ -36,9 +36,6 @@ public class EscolherPerfilPresenter {
                 usuario.setComprador(true);
                 state = new CompradorState();
             }
-
-            // Aqui você pode ir para a tela principal
-            JOptionPane.showMessageDialog((Component) view, "Indo para tela principal...");
             view.fechar();
 
 

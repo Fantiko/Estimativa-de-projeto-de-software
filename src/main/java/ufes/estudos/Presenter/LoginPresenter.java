@@ -1,7 +1,9 @@
 package ufes.estudos.Presenter;
 
 import ufes.estudos.Model.State.AdminState;
+import ufes.estudos.Model.State.CompradorState;
 import ufes.estudos.Model.State.IMainState;
+import ufes.estudos.Model.State.VendedorState;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.ILoginView;
 import ufes.estudos.Views.MainView;
@@ -17,7 +19,6 @@ public class LoginPresenter {
 
     public LoginPresenter(ILoginView view) {
         this.view = view;
-
         this.view.setLoginListener(e -> autenticar());
         this.view.setCadastrarListener(e -> abrirTelaCadastro());
     }
@@ -26,61 +27,62 @@ public class LoginPresenter {
         String username = view.getUsername();
         String senha = view.getSenha();
 
+        // Usuário Administrador
         if (username.equals("admin") && senha.equals("123")) {
-            Usuario usuarioLogado = new Usuario("admin", "123", "27992671690",
-                    "userteste@gmail.com", "Ademiro da Silva User");
+            Usuario usuarioLogado = new Usuario("admin", "123", "N/A", "admin@sistema.com", "Administrador do Sistema");
+            abrirTelaPrincipal(usuarioLogado, new AdminState());
 
-            abrirTelaAdmin(usuarioLogado);
-
+            // MODIFICADO: Usuário 'user' agora é Vendedor E Comprador
         } else if (username.equals("user") && senha.equals("123")) {
-            Usuario usuarioLogado = new Usuario("user", "123", "27992671690",
-                    "userteste@gmail.com", "Usuário da Silva User"); //USUÁRIO TEMPORÁRIO PRA TESTES
+            Usuario usuarioLogado = new Usuario("user", "123", "27999990001", "user@gmail.com", "Usuário Padrão");
+            usuarioLogado.setVendedor(true);
+            usuarioLogado.setComprador(true);
+            abrirTelaEscolhaPerfil(usuarioLogado); // Como ele tem os 2 perfis, precisa escolher
 
-            abrirTelaEscolhaPerfil(usuarioLogado);
+            // NOVO: Usuário 'vendedor' é APENAS vendedor
+        } else if (username.equals("vendedor") && senha.equals("123")) {
+            Usuario usuarioLogado = new Usuario("vendedor", "123", "27999990002", "vendedor@gmail.com", "Vendedor Exclusivo");
+            usuarioLogado.setVendedor(true);
+            usuarioLogado.setComprador(false);
+            abrirTelaPrincipal(usuarioLogado, new VendedorState()); // Vai direto para o painel de vendedor
 
-        }else {
+            // NOVO: Usuário 'comprador' é APENAS comprador
+        } else if (username.equals("comprador") && senha.equals("123")) {
+            Usuario usuarioLogado = new Usuario("comprador", "123", "27999990003", "comprador@gmail.com", "Comprador Exclusivo");
+            usuarioLogado.setVendedor(false);
+            usuarioLogado.setComprador(true);
+            abrirTelaPrincipal(usuarioLogado, new CompradorState()); // Vai direto para o painel de comprador
+
+        } else {
             JOptionPane.showMessageDialog((Component) view, "Login ou senha incorretos!");
         }
-
-
     }
 
     private void abrirTelaEscolhaPerfil(Usuario usuarioLogado) {
-        // Fecha a tela de login
-        if (view instanceof JFrame) {
-            ((JFrame) view).dispose();
+        if (view instanceof javax.swing.JFrame) {
+            ((javax.swing.JFrame) view).dispose();
         }
-
-        // Abre a tela de escolha de perfil
         TelaEscolherPerfil telaPerfil = new TelaEscolherPerfil();
         new EscolherPerfilPresenter(telaPerfil, usuarioLogado);
         telaPerfil.setVisible(true);
     }
 
     private void abrirTelaCadastro() {
-        // Fecha a tela de login
         if (view instanceof javax.swing.JFrame) {
             ((javax.swing.JFrame) view).dispose();
         }
-
-        // Abre a tela de cadastro
         TelaCadastroEtapa1 telaCadastroEtapa1 = new TelaCadastroEtapa1(null);
         new CadastroEtapa1Presenter(telaCadastroEtapa1, null);
         telaCadastroEtapa1.setVisible(true);
     }
 
-    private void abrirTelaAdmin(Usuario usuarioLogado){
-        // Fecha a tela de login
+    // Método genérico para abrir a tela principal
+    private void abrirTelaPrincipal(Usuario usuarioLogado, IMainState state) {
         if (view instanceof javax.swing.JFrame) {
             ((javax.swing.JFrame) view).dispose();
         }
-
-        //cria o estado de admin
-        IMainState state = new AdminState();
-
-        MainView view = new MainView();
-        new MainPresenter(view, state, usuarioLogado);
-        view.setVisible(true);
-        // abrir tela principal aqui se quiser
+        MainView mainView = new MainView();
+        new MainPresenter(mainView, state, usuarioLogado);
+        mainView.setVisible(true);
     }
 }

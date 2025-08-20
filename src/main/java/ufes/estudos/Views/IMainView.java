@@ -1,20 +1,14 @@
 package ufes.estudos.Views;
 
+import ufes.estudos.Model.Usuario.Usuario; // IMPORT ADICIONADO
 import java.awt.event.ActionListener;
 
 public interface IMainView {
-
-    void setTitulo(String painelDoVendedor);
-
-    void exibirMenuVendedor();
-
-    void exibirMenuComprador();
-
+    void setTitulo(String titulo);
+    void exibirMenuVendedor(Usuario usuario); // MÉTODO MODIFICADO
+    void exibirMenuComprador(Usuario usuario);
     void exibirMenuAdmin();
-
-    //void mostrarMensagem(String mensagem);
-
     void setLogoutListener(ActionListener listener);
-
+    void configurarBotaoTrocaPerfil(String texto, ActionListener listener, boolean visivel);
     void fechar();
 }
