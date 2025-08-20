@@ -4,6 +4,7 @@ import ufes.estudos.Model.Item.Defeito;
 import ufes.estudos.Model.Item.Item;
 import ufes.estudos.Model.Item.Material;
 import ufes.estudos.Views.IAdicionarAnuncioView;
+import ufes.estudos.repository.AnuncioRepository;
 import ufes.estudos.service.IdService; // 1. Importar o novo serviço
 
 import java.awt.event.ActionEvent;
@@ -14,11 +15,14 @@ public class AdicionarAnuncioPresenter {
     private final IAdicionarAnuncioView view;
     private final Map<String, String[]> defeitosMap;
     private final IdService idService; // 2. Adicionar o serviço como membro da classe
+    private final AnuncioRepository anuncioRepository; // Adicionar o repositório
 
     public AdicionarAnuncioPresenter(IAdicionarAnuncioView view) {
         this.view = view;
         this.defeitosMap = carregarDefeitos();
         this.idService = new IdService(); // 3. Instanciar o serviço no construtor
+        this.anuncioRepository = AnuncioRepository.getInstance(); // Obter a instância singleton
+
 
         this.view.setSalvarListener(this::salvarAnuncio);
         this.view.setCancelarListener(e -> this.view.fechar());
@@ -73,8 +77,7 @@ public class AdicionarAnuncioPresenter {
             );
 
             // TODO: Persistir o 'novoItem'
-            System.out.println("Novo anúncio salvo com sucesso!");
-            System.out.println("ID-C: " + novoItem.getIdentificadorCircular());
+            anuncioRepository.addAnuncio(novoItem);
 
             view.exibirMensagem("Anúncio salvo com sucesso!\nID-C: " + novoItem.getIdentificadorCircular());
             view.fechar();

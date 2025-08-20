@@ -1,6 +1,9 @@
 package ufes.estudos.Views;
 
 import ufes.estudos.Presenter.AdicionarAnuncioPresenter;
+import ufes.estudos.Presenter.GerenciarAnunciosPresenter;
+import ufes.estudos.Presenter.GerenciarAnunciosPresenter;
+import ufes.estudos.Views.TelaGerenciarAnuncios; // Importar a classe concreta
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,10 +52,7 @@ public class MainView extends JFrame implements IMainView {
 
     @Override
     public void exibirMenuVendedor() {
-        // Cria o botão
         JButton btnAdicionar = new JButton("Adicionar Anúncio");
-
-        // Adiciona a ação para abrir a tela de anúncio
         btnAdicionar.addActionListener(e -> {
             TelaAdicionarAnuncio telaAnuncio = new TelaAdicionarAnuncio();
             new AdicionarAnuncioPresenter(telaAnuncio);
@@ -60,10 +60,19 @@ public class MainView extends JFrame implements IMainView {
             telaAnuncio.setVisible(true);
         });
 
-        // Abre a janela do menu com o botão
+        // Novo botão e sua ação
+        JButton btnGerenciar = new JButton("Gerenciar Anúncios");
+        btnGerenciar.addActionListener(e -> {
+            // Passa a referência do desktopPane para a tela
+            TelaGerenciarAnuncios telaGerenciar = new TelaGerenciarAnuncios(desktopPane);
+            new GerenciarAnunciosPresenter(telaGerenciar);
+            desktopPane.add(telaGerenciar);
+            telaGerenciar.setVisible(true);
+        });
+
         abrirInternalFrame("Menu Vendedor",
                 btnAdicionar,
-                new JButton("Gerenciar Anúncios")
+                btnGerenciar // Adiciona o novo botão ao menu
         );
     }
 
