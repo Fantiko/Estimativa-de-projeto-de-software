@@ -1,6 +1,8 @@
 package ufes.estudos.Views;
 
+import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Presenter.AdicionarAnuncioPresenter;
+import ufes.estudos.Presenter.CatalogoPresenter;
 import ufes.estudos.Presenter.GerenciarAnunciosPresenter;
 import ufes.estudos.Presenter.GerenciarAnunciosPresenter;
 import ufes.estudos.Views.TelaGerenciarAnuncios; // Importar a classe concreta
@@ -13,6 +15,7 @@ import java.beans.PropertyVetoException;
 public class MainView extends JFrame implements IMainView {
     private final JLabel lblTitulo;
     private final JButton btnLogout;
+    private final JButton btnTrocarPerfil;
     private final JDesktopPane desktopPane;
 
     // Variáveis para controlar a posição em cascata das janelas
@@ -35,7 +38,9 @@ public class MainView extends JFrame implements IMainView {
 
         // Rodapé com botão de logout
         btnLogout = new JButton("Logout");
+        btnTrocarPerfil = new JButton(); // <<< ADICIONE ESTA LINHA
         JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        painelRodape.add(btnTrocarPerfil); // <<< ADICIONE ESTA LINHA
         painelRodape.add(btnLogout);
         add(painelRodape, BorderLayout.SOUTH);
 
@@ -51,19 +56,17 @@ public class MainView extends JFrame implements IMainView {
     }
 
     @Override
-    public void exibirMenuVendedor() {
+    public void exibirMenuVendedor(Usuario usuario) { // PARÂMETRO ADICIONADO
         JButton btnAdicionar = new JButton("Adicionar Anúncio");
         btnAdicionar.addActionListener(e -> {
             TelaAdicionarAnuncio telaAnuncio = new TelaAdicionarAnuncio();
-            new AdicionarAnuncioPresenter(telaAnuncio);
+            new AdicionarAnuncioPresenter(telaAnuncio, usuario); // USUÁRIO PASSADO AQUI
             desktopPane.add(telaAnuncio);
             telaAnuncio.setVisible(true);
         });
 
-        // Novo botão e sua ação
         JButton btnGerenciar = new JButton("Gerenciar Anúncios");
         btnGerenciar.addActionListener(e -> {
-            // Passa a referência do desktopPane para a tela
             TelaGerenciarAnuncios telaGerenciar = new TelaGerenciarAnuncios(desktopPane);
             new GerenciarAnunciosPresenter(telaGerenciar);
             desktopPane.add(telaGerenciar);
@@ -72,15 +75,23 @@ public class MainView extends JFrame implements IMainView {
 
         abrirInternalFrame("Menu Vendedor",
                 btnAdicionar,
-                btnGerenciar // Adiciona o novo botão ao menu
+                btnGerenciar
         );
     }
 
     @Override
     public void exibirMenuComprador() {
+        JButton btnAbrirCatalogo = new JButton("Abrir Catálogo");
+        btnAbrirCatalogo.addActionListener(e -> {
+            TelaCatalogo tela = new TelaCatalogo();
+            new CatalogoPresenter(tela);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
         abrirInternalFrame("Menu Comprador",
-                new JButton("Comprar Item"),
-                new JButton("Histórico de Compras")
+                btnAbrirCatalogo,
+                new JButton("Meu Histórico de Compras") // Apenas um botão de placeholder
         );
     }
 
@@ -142,6 +153,22 @@ public class MainView extends JFrame implements IMainView {
         try {
             internalFrame.setSelected(true); // Seleciona a nova janela
         } catch (PropertyVetoException ignored) {}
+    }
+
+    @Override
+    public void configurarBotaoTrocaPerfil(String texto, ActionListener listener, boolean visivel) {
+        btnTrocarPerfil.setText(texto);
+
+        // Remove listeners antigos para evitar acúmulo
+        for (ActionListener al : btnTrocarPerfil.getActionListeners()) {
+            btnTrocarPerfil.removeActionListener(al);
+        }
+        // Adiciona o novo listener se ele existir
+        if (listener != null) {
+            btnTrocarPerfil.addActionListener(listener);
+        }
+
+        btnTrocarPerfil.setVisible(visivel);
     }
 
     @Override

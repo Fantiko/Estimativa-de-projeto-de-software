@@ -8,13 +8,14 @@ public class Item {
     private final String corPredominante;
     private final Material material;
     private final Defeito defeito;
-    private final String estadoConservacao; // Novo
-    private final double massaEstimada;     // Novo
-    private final double precoBase;         // Novo
+    private final String estadoConservacao;
+    private final double massaEstimada;
+    private final double precoBase;
+    private final String nomeVendedor; // CAMPO ADICIONADO
 
     public Item(String identificadorCircular, String tipoPeca, String subcategoria, String tamanho,
                 String corPredominante, Material material, Defeito defeito, String estadoConservacao,
-                double massaEstimada, double precoBase) {
+                double massaEstimada, double precoBase, String nomeVendedor) { // PARÂMETRO ADICIONADO
         this.identificadorCircular = identificadorCircular;
         this.tipoPeca = tipoPeca;
         this.subcategoria = subcategoria;
@@ -25,9 +26,10 @@ public class Item {
         this.estadoConservacao = estadoConservacao;
         this.massaEstimada = massaEstimada;
         this.precoBase = precoBase;
+        this.nomeVendedor = nomeVendedor; // ATRIBUIÇÃO ADICIONADA
     }
 
-    // Getters para todos os campos (incluindo os novos)
+    // Getters para todos os campos
     public String getIdentificadorCircular() { return identificadorCircular; }
     public String getTipoPeca() { return tipoPeca; }
     public String getSubcategoria() { return subcategoria; }
@@ -38,4 +40,5 @@ public class Item {
     public String getEstadoConservacao() { return estadoConservacao; }
     public double getMassaEstimada() { return massaEstimada; }
     public double getPrecoBase() { return precoBase; }
+    public String getNomeVendedor() { return nomeVendedor; } // GETTER ADICIONADO
 }

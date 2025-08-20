@@ -1,9 +1,14 @@
 package ufes.estudos.Presenter;
 
+import ufes.estudos.Model.State.CompradorState;
 import ufes.estudos.Model.State.IMainState;
+import ufes.estudos.Model.State.VendedorState;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.IMainView;
+import ufes.estudos.Views.MainView;
 import ufes.estudos.Views.TelaLogin;
+
+import javax.swing.*;
 
 public class MainPresenter {
     private final IMainView view;
@@ -15,8 +20,58 @@ public class MainPresenter {
         this.state = state;
         this.usuario = usuario;
 
-        state.configurarTela(view);
+        state.configurarTela(view, usuario); // CHAMADA MODIFICADA
         this.view.setLogoutListener(e -> logout());
+        configurarTrocaDePerfil();
+    }
+
+    private void configurarTrocaDePerfil() {
+        // Lógica para quando o usuário está no painel de VENDEDOR
+        if (state instanceof VendedorState) {
+            if (usuario.isComprador()) {
+                view.configurarBotaoTrocaPerfil("Trocar para Comprador", e -> trocarDePerfil(), true);
+            } else {
+                view.configurarBotaoTrocaPerfil("Solicitar Perfil de Comprador", e -> solicitarPerfil("Comprador"), true);
+            }
+        }
+        // Lógica para quando o usuário está no painel de COMPRADOR
+        else if (state instanceof CompradorState) {
+            if (usuario.isVendedor()) {
+                view.configurarBotaoTrocaPerfil("Trocar para Vendedor", e -> trocarDePerfil(), true);
+            } else {
+                view.configurarBotaoTrocaPerfil("Solicitar Perfil de Vendedor", e -> solicitarPerfil("Vendedor"), true);
+            }
+        }
+        // Para qualquer outro tipo de painel (ex: Admin), o botão fica invisível
+        else {
+            view.configurarBotaoTrocaPerfil(null, null, false);
+        }
+    }
+
+    private void trocarDePerfil() {
+        view.fechar(); // Fecha a tela atual
+
+        IMainState novoState;
+        // Se estava como vendedor, o novo estado é de comprador, e vice-versa
+        if (state instanceof VendedorState) {
+            novoState = new CompradorState();
+        } else {
+            novoState = new VendedorState();
+        }
+
+        // Abre a nova tela principal com o estado trocado
+        MainView novaView = new MainView();
+        new MainPresenter(novaView, novoState, usuario);
+        novaView.setVisible(true);
+    }
+
+    private void solicitarPerfil(String tipoPerfil) {
+        // Por enquanto, apenas exibe uma mensagem.
+        // No futuro, isso poderia registrar a solicitação em um banco de dados.
+        JOptionPane.showMessageDialog((JFrame) view,
+                "Solicitação para se tornar um " + tipoPerfil + " foi enviada para análise.",
+                "Solicitação Enviada",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void logout() {
@@ -27,4 +82,3 @@ public class MainPresenter {
         view.setVisible(true);
     }
 }
-

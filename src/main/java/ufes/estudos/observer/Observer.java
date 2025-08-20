@@ -1,5 +1,5 @@
 package ufes.estudos.observer;
 
 public interface Observer {
-    void update();
+    void update(String tipoNotificacao, Object dados);
 }

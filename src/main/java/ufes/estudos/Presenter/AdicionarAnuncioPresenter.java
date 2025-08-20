@@ -3,6 +3,7 @@ package ufes.estudos.Presenter;
 import ufes.estudos.Model.Item.Defeito;
 import ufes.estudos.Model.Item.Item;
 import ufes.estudos.Model.Item.Material;
+import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.IAdicionarAnuncioView;
 import ufes.estudos.repository.AnuncioRepository;
 import ufes.estudos.service.IdService; // 1. Importar o novo serviço
@@ -14,15 +15,18 @@ import java.util.Map;
 public class AdicionarAnuncioPresenter {
     private final IAdicionarAnuncioView view;
     private final Map<String, String[]> defeitosMap;
-    private final IdService idService; // 2. Adicionar o serviço como membro da classe
-    private final AnuncioRepository anuncioRepository; // Adicionar o repositório
+    private final IdService idService;
+    private final AnuncioRepository anuncioRepository;
+    private final Usuario usuario; // CAMPO ADICIONADO
 
-    public AdicionarAnuncioPresenter(IAdicionarAnuncioView view) {
+
+
+    public AdicionarAnuncioPresenter(IAdicionarAnuncioView view, Usuario usuario) { // PARÂMETRO ADICIONADO
         this.view = view;
+        this.usuario = usuario; // ATRIBUIÇÃO ADICIONADA
         this.defeitosMap = carregarDefeitos();
-        this.idService = new IdService(); // 3. Instanciar o serviço no construtor
-        this.anuncioRepository = AnuncioRepository.getInstance(); // Obter a instância singleton
-
+        this.idService = new IdService();
+        this.anuncioRepository = AnuncioRepository.getInstance();
 
         this.view.setSalvarListener(this::salvarAnuncio);
         this.view.setCancelarListener(e -> this.view.fechar());
@@ -73,7 +77,8 @@ public class AdicionarAnuncioPresenter {
 
             Item novoItem = new Item(
                     idc, view.getTipoPeca(), view.getSubcategoria(), view.getTamanho(),
-                    view.getCor(), material, defeito, view.getEstado(), massa, preco
+                    view.getCor(), material, defeito, view.getEstado(), massa, preco,
+                    usuario.getNome() // <<< ADICIONE O NOME DO VENDEDOR AQUI
             );
 
             // TODO: Persistir o 'novoItem'

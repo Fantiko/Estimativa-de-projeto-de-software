@@ -25,7 +25,7 @@ public class AnuncioRepository extends Subject {
         // TODO: Adicionar verificação do limite de 30 anúncios por vendedor
         this.anuncios.add(item);
         System.out.println("Repositório notificado. Notificando observadores...");
-        notifyObservers(); // Notifica todos os observadores que houve mudança
+        notifyObservers("ADD", item); // Notifica todos os observadores que houve mudança
     }
 
     public List<Item> getAnuncios() {
@@ -39,7 +39,7 @@ public class AnuncioRepository extends Subject {
             if (anuncios.get(i).getIdentificadorCircular().equals(itemAtualizado.getIdentificadorCircular())) {
                 anuncios.set(i, itemAtualizado);
                 System.out.println("Repositório atualizado. Notificando observadores...");
-                notifyObservers(); // Notifica que houve mudança
+                notifyObservers("UPDATE", itemAtualizado); // Notifica que houve mudança
                 return;
             }
         }
@@ -49,7 +49,7 @@ public class AnuncioRepository extends Subject {
         boolean removed = anuncios.removeIf(item -> item.getIdentificadorCircular().equals(idc));
         if (removed) {
             System.out.println("Repositório removeu item. Notificando observadores...");
-            notifyObservers(); // Notifica que houve mudança
+            notifyObservers("DELETE", idc); // Notifica que houve mudança
         }
     }
 

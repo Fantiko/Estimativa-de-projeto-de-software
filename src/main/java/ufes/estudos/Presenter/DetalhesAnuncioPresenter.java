@@ -33,7 +33,29 @@ public class DetalhesAnuncioPresenter implements Observer {
     private void salvarEdicao() {
         Item itemEditado = view.getDadosAnuncioEditado();
         if (itemEditado != null) {
-            anuncioRepository.updateAnuncio(itemEditado);
+            // A lógica aqui continua a mesma, mas a criação do item no método
+            // getDadosAnuncioEditado() da view precisa ser ajustada.
+            // No entanto, para seguir o MVP, o ideal é que a lógica fique no Presenter.
+            // Vamos recriar o item aqui para garantir.
+
+            Item dadosEditadosDaView = view.getDadosAnuncioEditado();
+
+            // Recria o Item com o nome do vendedor original, que não pode ser editado
+            Item itemFinal = new Item(
+                    dadosEditadosDaView.getIdentificadorCircular(),
+                    dadosEditadosDaView.getTipoPeca(),
+                    dadosEditadosDaView.getSubcategoria(),
+                    dadosEditadosDaView.getTamanho(),
+                    dadosEditadosDaView.getCorPredominante(),
+                    dadosEditadosDaView.getMaterial(),
+                    dadosEditadosDaView.getDefeito(),
+                    dadosEditadosDaView.getEstadoConservacao(),
+                    dadosEditadosDaView.getMassaEstimada(),
+                    dadosEditadosDaView.getPrecoBase(),
+                    this.itemOriginal.getNomeVendedor() // USA O NOME DO VENDEDOR ORIGINAL
+            );
+
+            anuncioRepository.updateAnuncio(itemFinal);
             view.exibirMensagem("Anúncio atualizado com sucesso!");
             view.fechar();
         } else {
@@ -58,17 +80,27 @@ public class DetalhesAnuncioPresenter implements Observer {
     }
 
     @Override
-    public void update() {
-        // Se o item que esta tela está exibindo for alterado ou deletado,
-        // a tela se fecha para evitar inconsistência de dados.
-        Item itemAtual = anuncioRepository.findByIdc(itemOriginal.getIdentificadorCircular());
-        if (itemAtual == null) {
-            view.exibirMensagem("Este anúncio foi removido por outra ação.");
-            view.fechar();
-        } else {
-            // Atualiza a tela caso os dados tenham sido alterados externamente
-            this.itemOriginal = itemAtual;
-            view.exibirAnuncio(itemAtual);
+    public void update(String tipoNotificacao, Object dados) {
+        String idcDoItemEmTela = itemOriginal.getIdentificadorCircular();
+
+        // Se a notificação for de UPDATE
+        if ("UPDATE".equals(tipoNotificacao) && dados instanceof Item) {
+            Item itemAtualizado = (Item) dados;
+            // Verifica se a atualização é sobre o item que esta tela está mostrando
+            if (itemAtualizado.getIdentificadorCircular().equals(idcDoItemEmTela)) {
+                this.itemOriginal = itemAtualizado;
+                view.exibirAnuncio(itemAtualizado);
+            }
         }
+        // Se a notificação for de DELETE
+        else if ("DELETE".equals(tipoNotificacao) && dados instanceof String) {
+            String idcRemovido = (String) dados;
+            // Verifica se a remoção é do item que esta tela está mostrando
+            if (idcRemovido.equals(idcDoItemEmTela)) {
+                view.exibirMensagem("Este anúncio foi removido por outra ação.");
+                view.fechar();
+            }
+        }
+        // Notificações do tipo "ADD" serão simplesmente ignoradas.
     }
 }

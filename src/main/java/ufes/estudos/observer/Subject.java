@@ -14,9 +14,9 @@ public class Subject {
         observers.remove(observer);
     }
 
-    public void notifyObservers() {
+    public void notifyObservers(String tipoNotificacao, Object dados) {
         for (Observer observer : observers) {
-            observer.update();
+            observer.update(tipoNotificacao, dados);
         }
     }
 }

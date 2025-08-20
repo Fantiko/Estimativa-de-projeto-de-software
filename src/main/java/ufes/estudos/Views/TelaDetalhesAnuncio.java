@@ -128,7 +128,7 @@ public class TelaDetalhesAnuncio extends JInternalFrame implements IDetalhesAnun
 
             return new Item(idcOriginal, tipoPeca, subcategoria, tamanho, cor,
                     new Material(composicao, 0), new Defeito(defeitoStr, 0),
-                    estado, massa, preco);
+                    estado, massa, preco, null); //pode ser ""
         } catch (Exception e) {
             return null;
         }
