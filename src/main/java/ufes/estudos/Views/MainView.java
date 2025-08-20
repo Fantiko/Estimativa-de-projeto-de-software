@@ -80,11 +80,11 @@ public class MainView extends JFrame implements IMainView {
     }
 
     @Override
-    public void exibirMenuComprador() {
+    public void exibirMenuComprador(Usuario usuario) {
         JButton btnAbrirCatalogo = new JButton("Abrir Catálogo");
         btnAbrirCatalogo.addActionListener(e -> {
             TelaCatalogo tela = new TelaCatalogo();
-            new CatalogoPresenter(tela);
+            new CatalogoPresenter(tela, usuario); // <<< LINHA MODIFICADA
             desktopPane.add(tela);
             tela.setVisible(true);
         });
