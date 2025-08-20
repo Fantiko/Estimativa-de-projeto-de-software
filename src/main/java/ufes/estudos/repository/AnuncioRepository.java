@@ -59,4 +59,19 @@ public class AnuncioRepository extends Subject {
                 .findFirst()
                 .orElse(null);
     }
+
+    /**
+     * Retorna uma lista de anúncios pertencentes a um vendedor específico.
+     * @param nomeVendedor O nome do vendedor para filtrar os anúncios.
+     * @return Uma lista contendo apenas os itens do vendedor especificado.
+     */
+    public List<Item> getAnunciosByVendedor(String nomeVendedor) {
+        List<Item> anunciosDoVendedor = new ArrayList<>();
+        for (Item item : this.anuncios) {
+            if (item.getNomeVendedor() != null && item.getNomeVendedor().equals(nomeVendedor)) {
+                anunciosDoVendedor.add(item);
+            }
+        }
+        return anunciosDoVendedor; // Retorna a lista filtrada
+    }
 }

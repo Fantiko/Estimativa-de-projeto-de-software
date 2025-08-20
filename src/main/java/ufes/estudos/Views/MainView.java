@@ -68,7 +68,7 @@ public class MainView extends JFrame implements IMainView {
         JButton btnGerenciar = new JButton("Gerenciar Anúncios");
         btnGerenciar.addActionListener(e -> {
             TelaGerenciarAnuncios telaGerenciar = new TelaGerenciarAnuncios(desktopPane);
-            new GerenciarAnunciosPresenter(telaGerenciar);
+            new GerenciarAnunciosPresenter(telaGerenciar, usuario); // <<< LINHA MODIFICADA
             desktopPane.add(telaGerenciar);
             telaGerenciar.setVisible(true);
         });
