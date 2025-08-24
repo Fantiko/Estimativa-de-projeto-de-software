@@ -126,9 +126,11 @@ public class TelaDetalhesAnuncio extends JInternalFrame implements IDetalhesAnun
             String defeitoStr = (String) cbDefeitos.getSelectedItem();
             double preco = Double.parseDouble(txtPreco.getText().replace(',', '.'));
 
+            // CONSTRUTOR CORRIGIDO PARA INCLUIR OS NOVOS PARÂMETROS
             return new Item(idcOriginal, tipoPeca, subcategoria, tamanho, cor,
                     new Material(composicao, 0), new Defeito(defeitoStr, 0),
-                    estado, massa, preco, null); //pode ser ""
+                    estado, massa, preco,
+                    null, 0.0, 0.0); // Passa valores padrão para os campos não editáveis
         } catch (Exception e) {
             return null;
         }

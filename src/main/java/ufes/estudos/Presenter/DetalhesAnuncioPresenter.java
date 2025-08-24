@@ -31,16 +31,9 @@ public class DetalhesAnuncioPresenter implements Observer {
     }
 
     private void salvarEdicao() {
-        Item itemEditado = view.getDadosAnuncioEditado();
-        if (itemEditado != null) {
-            // A lógica aqui continua a mesma, mas a criação do item no método
-            // getDadosAnuncioEditado() da view precisa ser ajustada.
-            // No entanto, para seguir o MVP, o ideal é que a lógica fique no Presenter.
-            // Vamos recriar o item aqui para garantir.
-
-            Item dadosEditadosDaView = view.getDadosAnuncioEditado();
-
-            // Recria o Item com o nome do vendedor original, que não pode ser editado
+        Item dadosEditadosDaView = view.getDadosAnuncioEditado();
+        if (dadosEditadosDaView != null) {
+            // Recria o Item com os dados da edição mais os dados que não mudam
             Item itemFinal = new Item(
                     dadosEditadosDaView.getIdentificadorCircular(),
                     dadosEditadosDaView.getTipoPeca(),
@@ -52,7 +45,9 @@ public class DetalhesAnuncioPresenter implements Observer {
                     dadosEditadosDaView.getEstadoConservacao(),
                     dadosEditadosDaView.getMassaEstimada(),
                     dadosEditadosDaView.getPrecoBase(),
-                    this.itemOriginal.getNomeVendedor() // USA O NOME DO VENDEDOR ORIGINAL
+                    this.itemOriginal.getNomeVendedor(),    // Passa o nome do vendedor original
+                    this.itemOriginal.getGwpBase(),         // <<< Passa o gwpBase original
+                    this.itemOriginal.getGwpAvoided()       // <<< Passa o gwpAvoided original
             );
 
             anuncioRepository.updateAnuncio(itemFinal);

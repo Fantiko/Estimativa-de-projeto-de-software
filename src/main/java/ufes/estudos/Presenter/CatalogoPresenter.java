@@ -3,8 +3,10 @@ package ufes.estudos.Presenter;
 import ufes.estudos.Model.Item.Item;
 import ufes.estudos.Model.Usuario.Usuario; // IMPORT ADICIONADO
 import ufes.estudos.Views.ICatalogoView;
+import ufes.estudos.Views.TelaNegociacao;
 import ufes.estudos.repository.AnuncioRepository;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,32 +37,49 @@ public class CatalogoPresenter {
                 continue; // Pula para a próxima iteração do loop
             }
 
-            double precoBase = item.getPrecoBase();
-            double percentualDesconto = calcularDescontoPorDefeito(item.getDefeito().getDefeito());
-            double precoFinal = precoBase * (1 - percentualDesconto);
-            double gwpEvitado = item.getMassaEstimada() * item.getMaterial().getFatorEmissao(); // Simulação
-            double mciSimulado = simularMCI(item.getEstadoConservacao());
+            double precoFinal = item.getPrecoBase() * (1 - item.getDefeito().getPercentual());
+            double mci = 1 - item.getDefeito().getPercentual();
 
             dadosParaTabela.add(new Object[]{
                     item.getIdentificadorCircular(),
                     item.getTipoPeca(),
                     item.getNomeVendedor(),
                     String.format("%.2f", precoFinal),
-                    String.format("%.2f", mciSimulado),
-                    String.format("%.4f", gwpEvitado)
+                    String.format("%.2f", mci),
+                    String.format("%.4f", item.getGwpAvoided())
             });
         }
         view.atualizarTabela(dadosParaTabela);
     }
 
+    // Dentro da classe CatalogoPresenter
+
     private void comprarItemSelecionado() {
         int selectedRow = view.getTabelaCatalogo().getSelectedRow();
         if (selectedRow < 0) {
-            view.exibirMensagem("Por favor, selecione um item para comprar.");
+            view.exibirMensagem("Por favor, selecione um item para fazer uma oferta.");
             return;
         }
+
         String idc = (String) view.getTabelaCatalogo().getValueAt(selectedRow, 0);
-        view.exibirMensagem("Compra do item " + idc + " realizada com sucesso! (Funcionalidade em desenvolvimento)");
+        // Precisamos do objeto Item completo
+        Item itemSelecionado = anuncioRepository.findByIdc(idc);
+
+        if (itemSelecionado == null) {
+            view.exibirMensagem("Erro: Item não encontrado.");
+            return;
+        }
+
+        // Precisamos do preço final que está na tabela
+        String precoFinalStr = (String) view.getTabelaCatalogo().getValueAt(selectedRow, 3);
+        double precoFinal = Double.parseDouble(precoFinalStr.replace(',', '.'));
+
+        // Acessa a MainView para ser a "mãe" do JDialog
+        JFrame framePrincipal = (JFrame) SwingUtilities.getWindowAncestor((JComponent) view);
+
+        TelaNegociacao tela = new TelaNegociacao(framePrincipal);
+        new NegociacaoPresenter(tela, itemSelecionado, this.usuario, precoFinal);
+        tela.setVisible(true);
     }
 
     private double calcularDescontoPorDefeito(String defeito) {
