@@ -2,6 +2,7 @@ package ufes.estudos.repository.RepositoriesIntefaces;
 
 import ufes.estudos.Model.Usuario.Insignia;
 import ufes.estudos.Model.Usuario.PerfilComprador;
+import ufes.estudos.Model.Usuario.Usuario;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +12,7 @@ public interface PerfilCompradorRepository {
     void atualizar(PerfilComprador perfil);
 
     Optional<PerfilComprador> buscarPorId(int id);
-    Optional<PerfilComprador> buscarPorUsuarioId(int usuarioId);
+    Optional<PerfilComprador> buscarPorUsuarioId(Usuario usuario);
 
     void adicionarInsignia(int perfilCompradorId, int insigniaId);
     void removerInsignia(int perfilCompradorId, int insigniaId);

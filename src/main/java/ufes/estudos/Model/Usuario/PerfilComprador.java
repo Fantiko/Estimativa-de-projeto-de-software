@@ -10,7 +10,7 @@ public class PerfilComprador extends Usuario {
 
     private int comprasFinalizadas;
 
-    private List<String> insigniasPermanentes = new ArrayList<String>();
+    private List<Insignia> insigniasPermanentes = new ArrayList<>();
 
     private boolean seloVerificado;
 
@@ -23,6 +23,10 @@ public class PerfilComprador extends Usuario {
         this.totalEstrelas = 0;
         this.nivelReputacao = 0;
         this.comprasFinalizadas = 0;
+    }
+
+    public PerfilComprador(){
+
     }
 
     public int getTotalEstrelas() {
@@ -57,11 +61,11 @@ public class PerfilComprador extends Usuario {
         this.CO2Evitado = CO2Evitado;
     }
 
-    public List<String> getInsigniasPermanentes() {
+    public List<Insignia> getInsigniasPermanentes() {
         return insigniasPermanentes;
     }
 
-    public void setInsigniasPermanentes(List<String> insigniasPermanentes) {
+    public void setInsigniasPermanentes(List<Insignia> insigniasPermanentes) {
         this.insigniasPermanentes = insigniasPermanentes;
     }
 

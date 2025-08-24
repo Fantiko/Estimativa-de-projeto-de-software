@@ -1,5 +1,7 @@
 package ufes.estudos.Model.Usuario;
 
+import java.time.LocalDate;
+
 public class Insignia {
     private String nome;
 
@@ -7,13 +9,22 @@ public class Insignia {
 
     private int id;
 
+    private LocalDate dataConquista;
+
     public Insignia(String nome, String descricao) {
         this.nome = nome;
         this.descricao = descricao;
     }
 
     public Insignia(){
-        // Construtor padrão necessário para algumas operações de persistência
+    }
+
+    public LocalDate getDataConquista() {
+        return dataConquista;
+    }
+
+    public void setDataConquista(LocalDate dataConquista) {
+        this.dataConquista = dataConquista;
     }
 
     public int getId() {

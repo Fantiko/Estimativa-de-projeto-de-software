@@ -20,7 +20,7 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
 
     @Override
     public Optional<PerfilVendedor> adicionar(PerfilVendedor perfil) {
-        String sql = "INSERT INTO perfilVendedor (usuario_id) VALUES (?)";
+        String sql = "INSERT INTO perfilVendedor (usuarioId) VALUES (?)";
         try (Connection con = connectionManager.getConnection();
              var stmt = con.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 
@@ -58,7 +58,7 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
 
     @Override
     public Optional<PerfilVendedor> buscarPorUsuarioId(Usuario usuario) {
-        String sql = "SELECT * FROM perfilVendedor WHERE usuario_id = ?";
+        String sql = "SELECT * FROM perfilVendedor WHERE usuarioId = ?";
         try (Connection con = connectionManager.getConnection();
              var stmt = con.prepareStatement(sql)) {
 
@@ -67,10 +67,10 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
 
             if (rs.next()) {
                 PerfilVendedor perfil = new PerfilVendedor(usuario);
-                perfil.setTotalEstrelas(rs.getInt("total_estrelas"));
-                perfil.setVendasConcluidas(rs.getInt("vendas_concluidas"));
-                perfil.setDenunciasRecebidas(rs.getInt("denuncias_recebidas"));
-                perfil.setBeneficioClimaticoContribuido(rs.getDouble("beneficio_climatico_contribuido"));
+                perfil.setTotalEstrelas(rs.getInt("totalEstrelas"));
+                perfil.setVendasConcluidas(rs.getInt("vendasConcluidas"));
+                perfil.setDenunciasRecebidas(rs.getInt("denunciasRecebidas"));
+                perfil.setBeneficioClimaticoContribuido(rs.getDouble("beneficioClimaticoContribuido"));
                 perfil.setNivelReputacao(NivelReputacao.valueOf(rs.getString("nivelReputacao")));
                 perfil.setInsignias(buscarInsignias(perfil.getId()));
 
@@ -96,7 +96,19 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
 
     @Override
     public List<Insignia> buscarInsignias(int perfilVendedorId) {
-        String sql = "SELECT * FROM insignias WHERE perfil_vendedor_id = ?";
+        String sql = "SELECT \n" +
+                "    i.id AS insigniaId,\n" +
+                "    i.nome AS nomeInsignia,\n" +
+                "    i.descricao,\n" +
+                "    pvi.dataConquista\n" +
+                "FROM \n" +
+                "    perfilVendedor AS pv\n" +
+                "JOIN \n" +
+                "    perfilVendedorInsignias AS pvi ON pv.id = pvi.perfilVendedorId\n" +
+                "JOIN \n" +
+                "    insignias AS i ON pvi.insigniaId = i.id\n" +
+                "WHERE \n" +
+                "    pv.id = ?;";
 
         try (Connection con = connectionManager.getConnection();
              var stmt = con.prepareStatement(sql)) {
@@ -109,6 +121,9 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
                 Insignia insignia = new Insignia();
                 insignia.setId(rs.getInt("id"));
                 insignia.setNome(rs.getString("nome"));
+                insignia.setDescricao(rs.getString("descricao"));
+                insignia.setDataConquista(rs.getDate("dataConquista").toLocalDate());
+
                 insignias.add(insignia);
             }
             return insignias;
