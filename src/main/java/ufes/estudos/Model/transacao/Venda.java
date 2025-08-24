@@ -18,5 +18,29 @@ public class Venda {
         this.gwpEvitado = gwpEvitado;
         this.dataVenda = LocalDateTime.now();
     }
-    // Adicione getters se precisar acessar esses dados futuramente
+
+    // --- GETTERS ADICIONADOS AQUI ---
+    public String getIdcItem() {
+        return idcItem;
+    }
+
+    public String getNomeComprador() {
+        return nomeComprador;
+    }
+
+    public String getNomeVendedor() {
+        return nomeVendedor;
+    }
+
+    public double getValorFinal() {
+        return valorFinal;
+    }
+
+    public double getGwpEvitado() {
+        return gwpEvitado;
+    }
+
+    public LocalDateTime getDataVenda() {
+        return dataVenda;
+    }
 }

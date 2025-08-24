@@ -143,13 +143,19 @@ public class MainView extends JFrame implements IMainView {
         JButton btnMeuPerfil = new JButton("Meus Dados do Perfil");
         btnMeuPerfil.addActionListener(getAbrirPerfilListener(usuario, new CompradorState()));
 
-        // --- CORREÇÃO ESTÁ AQUI ---
-        // Adicionamos o 'btnMeuPerfil' à lista de botões a serem exibidos.
+        JButton btnHistorico = new JButton("Meu Histórico de Compras");
+        btnHistorico.addActionListener(e -> {
+            TelaHistoricoCompras tela = new TelaHistoricoCompras();
+            new HistoricoComprasPresenter(tela, usuario);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
         abrirInternalFrame("Menu Comprador",
                 btnAbrirCatalogo,
                 btnMinhasOfertas,
-                btnMeuPerfil, // <<< BOTÃO ADICIONADO AQUI
-                new JButton("Meu Histórico de Compras")
+                btnMeuPerfil,
+                btnHistorico // << Use a nova variável aqui
         );
     }
 
