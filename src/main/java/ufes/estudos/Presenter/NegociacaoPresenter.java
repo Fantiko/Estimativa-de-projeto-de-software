@@ -1,11 +1,14 @@
 package ufes.estudos.Presenter;
 
 import ufes.estudos.Model.Item.Item;
+import ufes.estudos.Model.eventos.EventoTimeline;
+import ufes.estudos.Model.eventos.TipoEvento;
 import ufes.estudos.Model.transacao.Oferta;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.INegociacaoView;
 import ufes.estudos.repository.OfertaRepository;
 import ufes.estudos.repository.PerfilRepository;
+import ufes.estudos.repository.TimelineRepository;
 import ufes.estudos.service.*;
 
 public class NegociacaoPresenter {
@@ -47,6 +50,13 @@ public class NegociacaoPresenter {
 
             Oferta novaOferta = new Oferta(item.getIdentificadorCircular(), comprador.getNome(), item.getNomeVendedor(), valorOfertado);
             OfertaRepository.getInstance().addOferta(novaOferta);
+
+            // --- CÓDIGO DA LINHA DO TEMPO ADICIONADO AQUI ---
+            double mci = 1 - item.getDefeito().getPercentual();
+            String detalhes = "Oferta de R$ " + String.format("%.2f", valorOfertado) + " feita pelo comprador " + comprador.getNome();
+            EventoTimeline evento = new EventoTimeline(item.getIdentificadorCircular(), TipoEvento.OFERTA_ENVIADA, item.getGwpAvoided(), mci, detalhes);
+            TimelineRepository.getInstance().addEvento(evento);
+            // --- FIM DO CÓDIGO ADICIONADO ---
 
             ReputacaoService.getInstance().processarOfertaEnviada(PerfilRepository.getInstance().getComprador(comprador.getNome()));
             view.exibirMensagem("Oferta enviada com sucesso!");
