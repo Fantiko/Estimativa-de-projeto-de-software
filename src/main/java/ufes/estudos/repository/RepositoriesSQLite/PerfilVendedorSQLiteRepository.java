@@ -2,7 +2,9 @@ package ufes.estudos.repository.RepositoriesSQLite;
 
 import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager;
 import ufes.estudos.Model.Usuario.Insignia;
+import ufes.estudos.Model.Usuario.NivelReputacao;
 import ufes.estudos.Model.Usuario.PerfilVendedor;
+import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.repository.RepositoriesIntefaces.PerfilVendedorRepository;
 
 import java.sql.Connection;
@@ -55,12 +57,35 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
     }
 
     @Override
-    public Optional<PerfilVendedor> buscarPorUsuarioId(int usuarioId) {
+    public Optional<PerfilVendedor> buscarPorUsuarioId(Usuario usuario) {
+        String sql = "SELECT * FROM perfilVendedor WHERE usuario_id = ?";
+        try (Connection con = connectionManager.getConnection();
+             var stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, usuario.getId());
+            var rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                PerfilVendedor perfil = new PerfilVendedor(usuario);
+                perfil.setTotalEstrelas(rs.getInt("total_estrelas"));
+                perfil.setVendasConcluidas(rs.getInt("vendas_concluidas"));
+                perfil.setDenunciasRecebidas(rs.getInt("denuncias_recebidas"));
+                perfil.setBeneficioClimaticoContribuido(rs.getDouble("beneficio_climatico_contribuido"));
+                perfil.setNivelReputacao(NivelReputacao.valueOf(rs.getString("nivelReputacao")));
+                perfil.setInsignias(buscarInsignias(perfil.getId()));
+
+                return Optional.of(perfil);
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar perfil vendedor por usuário ID: " + e.getMessage());
+        }
+
         return Optional.empty();
     }
 
     @Override
     public void adicionarInsignia(int perfilVendedorId, int insigniaId) {
+
 
     }
 
@@ -71,6 +96,28 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
 
     @Override
     public List<Insignia> buscarInsignias(int perfilVendedorId) {
+        String sql = "SELECT * FROM insignias WHERE perfil_vendedor_id = ?";
+
+        try (Connection con = connectionManager.getConnection();
+             var stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, perfilVendedorId);
+            var rs = stmt.executeQuery();
+
+            List<Insignia> insignias = new java.util.ArrayList<>();
+            while (rs.next()) {
+                Insignia insignia = new Insignia();
+                insignia.setId(rs.getInt("id"));
+                insignia.setNome(rs.getString("nome"));
+                insignias.add(insignia);
+            }
+            return insignias;
+
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar insignias: " + e.getMessage());
+
+        }
+
         return null;
     }
 }

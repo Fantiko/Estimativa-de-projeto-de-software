@@ -23,7 +23,7 @@ public class PerfilVendedor extends Usuario{
     private String taxCuradoriaAssociada;// TODO FAZER ESSE TRECO AQUI
 
 
-    public PerfilVendedor(Usuario usuario, String taxCuradoriaAssociada) {
+    public PerfilVendedor(Usuario usuario) {
         super(usuario);
         this.nivelReputacao = NivelReputacao.bronze;
         this.totalEstrelas = 0;
@@ -62,7 +62,7 @@ public class PerfilVendedor extends Usuario{
         return denunciasRecebidas;
     }
 
-    public void setNumeroDenunciasRecebidas(int numeroDenunciasRecebidas) {
+    public void setDenunciasRecebidas(int numeroDenunciasRecebidas) {
         this.denunciasRecebidas = denunciasRecebidas;
     }
 
