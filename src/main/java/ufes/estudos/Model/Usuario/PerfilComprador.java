@@ -86,4 +86,5 @@ public class PerfilComprador extends Usuario {
     public void setSeloVerificado(boolean seloVerificado) {
         this.seloVerificado = seloVerificado;
     }
+
 }

@@ -2,6 +2,7 @@ package ufes.estudos.repository.RepositoriesSQLite;
 
 import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager;
 import ufes.estudos.Model.Usuario.Insignia;
+import ufes.estudos.Model.Usuario.NivelReputacao;
 import ufes.estudos.Model.Usuario.PerfilComprador;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.repository.RepositoriesIntefaces.PerfilCompradorRepository;
@@ -58,7 +59,7 @@ public class PerfilCompradorSQLiteRepository implements PerfilCompradorRepositor
                 if (rs.next()) {
                     PerfilComprador perfil = new PerfilComprador(usuario);
                     perfil.setId(rs.getInt("id"));
-                    perfil.setNivel(rs.getInt("nivelReputacao"));
+                    perfil.setNivelReputacao(NivelReputacao.valueOf(rs.getString("nivelReputacao")));
                     perfil.setTotalEstrelas(rs.getInt("totalEstrelas"));
                     perfil.setComprasFinalizadas(rs.getInt("comprasFinalizadas"));
                     perfil.setCO2Evitado(rs.getDouble("CO2Evitado"));
