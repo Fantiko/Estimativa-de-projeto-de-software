@@ -17,6 +17,13 @@ public class Usuario {
 
     private boolean admin = false;
 
+    private int id;
+
+    //construtor para o repository
+    public Usuario() {
+
+    }
+
     public Usuario(String usuario, String senha) {
         this.usuario = usuario;
         this.senha = senha;
@@ -40,6 +47,19 @@ public class Usuario {
         this.email = email;
         this.razaoSocial = razaoSocial;
         this.nomeCompleto = nomeCompleto;
+    }
+
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 
     public String getNome() {
@@ -108,6 +128,14 @@ public class Usuario {
 
     public LocalDateTime getDataCriacao() {
         return dataCriacao;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     // Dentro da classe Usuario.java

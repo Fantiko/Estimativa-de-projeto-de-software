@@ -11,14 +11,13 @@ public class PerfilVendedor extends Usuario{
     private int vendasConcluidas;
     private int denunciasRecebidas;
 
-    private List<String> insignias = new ArrayList<String>();
-    private List<String> selosVisuaisTemporada = new ArrayList<String>();
+    private List<Insignia> insignias = new ArrayList<>();
 
     private double beneficioClimaticoContribuido;
 
     private List<Item> catalogo;
 
-    private String taxCuradoriaAssociada;
+    private String taxCuradoriaAssociada;// TODO FAZER ESSE TRECO AQUI
 
 
     public PerfilVendedor(Usuario usuario) {
@@ -60,7 +59,7 @@ public class PerfilVendedor extends Usuario{
         return denunciasRecebidas;
     }
 
-    public void setNumeroDenunciasRecebidas(int numeroDenunciasRecebidas) {
+    public void setDenunciasRecebidas(int numeroDenunciasRecebidas) {
         this.denunciasRecebidas = denunciasRecebidas;
     }
 
@@ -80,19 +79,12 @@ public class PerfilVendedor extends Usuario{
         this.beneficioClimaticoContribuido = beneficioClimaticoContribuido;
     }
 
-    public List<String> getInsignias() {
+    public List<Insignia> getInsignias() {
         return insignias;
     }
 
-    public void setInsignias(List<String> insignias) {
+    public void setInsignias(List<Insignia> insignias) {
         this.insignias = insignias;
     }
 
-    public List<String> getSelosVisuaisTemporada() {
-        return selosVisuaisTemporada;
-    }
-
-    public void setSelosVisuaisTemporada(List<String> selosVisuaisTemporada) {
-        this.selosVisuaisTemporada = selosVisuaisTemporada;
-    }
 }
