@@ -1,14 +1,20 @@
 package ufes.estudos.repository.RepositoriesIntefaces;
 
+import ufes.estudos.Model.Usuario.Insignia;
 import ufes.estudos.Model.Usuario.PerfilVendedor;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PerfilVendedorRepository {
-    void adicionar(PerfilVendedor perfil);
+    Optional<PerfilVendedor> adicionar(PerfilVendedor perfil);
     void atualizar(PerfilVendedor perfil);
 
     Optional<PerfilVendedor> buscarPorId(int id);
     Optional<PerfilVendedor> buscarPorUsuarioId(int usuarioId);
+
+    void adicionarInsignia(int perfilVendedorId, int insigniaId);
+    void removerInsignia(int perfilVendedorId, int insigniaId);
+    List<Insignia> buscarInsignias(int perfilVendedorId);
 
 }

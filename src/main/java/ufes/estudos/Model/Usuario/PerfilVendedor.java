@@ -12,16 +12,18 @@ public class PerfilVendedor extends Usuario{
     private int denunciasRecebidas;
 
     private List<Insignia> insignias = new ArrayList<>();
-    private List<String> selosVisuaisTemporada = new ArrayList<>(); // acho que não coloquei no banco TODO colocar.
+
+
+    //private List<String> selosVisuaisTemporada = new ArrayList<>(); // nao precisa
 
     private double beneficioClimaticoContribuido;
 
     private List<Item> catalogo;
 
-    private String taxCuradoriaAssociada;
+    private String taxCuradoriaAssociada;// TODO FAZER ESSE TRECO AQUI
 
 
-    public PerfilVendedor(Usuario usuario) {
+    public PerfilVendedor(Usuario usuario, String taxCuradoriaAssociada) {
         super(usuario);
         this.nivelReputacao = NivelReputacao.bronze;
         this.totalEstrelas = 0;
@@ -88,11 +90,4 @@ public class PerfilVendedor extends Usuario{
         this.insignias = insignias;
     }
 
-    public List<String> getSelosVisuaisTemporada() {
-        return selosVisuaisTemporada;
-    }
-
-    public void setSelosVisuaisTemporada(List<String> selosVisuaisTemporada) {
-        this.selosVisuaisTemporada = selosVisuaisTemporada;
-    }
 }
