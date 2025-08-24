@@ -34,16 +34,27 @@ public class EscolherPerfilPresenter {
             // Dentro do método inicializar() do EscolherPerfilPresenter
 // ...
             IMainState state;
+            PerfilRepository perfilRepository = PerfilRepository.getInstance(); // Pega a instância
+
             if (view.isVendedorSelecionado()) {
                 usuario.setVendedor(true);
                 state = new VendedorState();
-                // Adiciona o perfil ao repositório
-                PerfilRepository.getInstance().addVendedor(new PerfilVendedor(usuario));
+
+                // --- LÓGICA DE 'GET-OR-CREATE' ---
+                if (perfilRepository.getVendedor(usuario.getNome()) == null) {
+                    perfilRepository.addVendedor(new PerfilVendedor(usuario));
+                }
+                // --- FIM DA LÓGICA ---
+
             } else {
                 usuario.setComprador(true);
                 state = new CompradorState();
-                // Adiciona o perfil ao repositório
-                PerfilRepository.getInstance().addComprador(new PerfilComprador(usuario));
+
+                // --- LÓGICA DE 'GET-OR-CREATE' ---
+                if (perfilRepository.getComprador(usuario.getNome()) == null) {
+                    perfilRepository.addComprador(new PerfilComprador(usuario));
+                }
+                // --- FIM DA LÓGICA ---
             }
 // ...
             view.fechar();
