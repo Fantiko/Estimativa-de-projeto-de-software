@@ -3,10 +3,12 @@ package ufes.estudos.Presenter;
 import ufes.estudos.Model.State.CompradorState;
 import ufes.estudos.Model.State.IMainState;
 import ufes.estudos.Model.State.VendedorState;
+import ufes.estudos.Model.Usuario.SolicitacaoPerfil;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.IMainView;
 import ufes.estudos.Views.MainView;
 import ufes.estudos.Views.TelaLogin;
+import ufes.estudos.repository.SolicitacaoRepository;
 
 import javax.swing.*;
 
@@ -19,6 +21,8 @@ public class MainPresenter {
         this.view = view;
         this.state = state;
         this.usuario = usuario;
+
+        view.setNomeUsuarioLogado(usuario.getNome());
 
         state.configurarTela(view, usuario); // CHAMADA MODIFICADA
         this.view.setLogoutListener(e -> logout());
@@ -66,8 +70,9 @@ public class MainPresenter {
     }
 
     private void solicitarPerfil(String tipoPerfil) {
-        // Por enquanto, apenas exibe uma mensagem.
-        // No futuro, isso poderia registrar a solicitação em um banco de dados.
+        SolicitacaoPerfil novaSolicitacao = new SolicitacaoPerfil(usuario.getUsuario(), tipoPerfil);
+        SolicitacaoRepository.getInstance().addSolicitacao(novaSolicitacao);
+
         JOptionPane.showMessageDialog((JFrame) view,
                 "Solicitação para se tornar um " + tipoPerfil + " foi enviada para análise.",
                 "Solicitação Enviada",

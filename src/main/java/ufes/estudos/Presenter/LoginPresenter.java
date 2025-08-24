@@ -9,6 +9,7 @@ import ufes.estudos.Views.ILoginView;
 import ufes.estudos.Views.MainView;
 import ufes.estudos.Views.TelaCadastroEtapa1;
 import ufes.estudos.Views.TelaEscolherPerfil;
+import ufes.estudos.repository.UsuarioRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +31,7 @@ public class LoginPresenter {
         // Usuário Administrador
         if (username.equals("admin") && senha.equals("123")) {
             Usuario usuarioLogado = new Usuario("admin", "123", "N/A", "admin@sistema.com", "Administrador do Sistema");
+            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
             abrirTelaPrincipal(usuarioLogado, new AdminState());
 
             // MODIFICADO: Usuário 'user' agora é Vendedor E Comprador
@@ -37,6 +39,7 @@ public class LoginPresenter {
             Usuario usuarioLogado = new Usuario("user", "123", "27999990001", "user@gmail.com", "Usuário Padrão");
             usuarioLogado.setVendedor(true);
             usuarioLogado.setComprador(true);
+            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
             abrirTelaEscolhaPerfil(usuarioLogado); // Como ele tem os 2 perfis, precisa escolher
 
             // NOVO: Usuário 'vendedor' é APENAS vendedor
@@ -44,6 +47,7 @@ public class LoginPresenter {
             Usuario usuarioLogado = new Usuario("vendedor", "123", "27999990002", "vendedor@gmail.com", "Vendedor Exclusivo");
             usuarioLogado.setVendedor(true);
             usuarioLogado.setComprador(false);
+            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
             abrirTelaPrincipal(usuarioLogado, new VendedorState()); // Vai direto para o painel de vendedor
 
             // NOVO: Usuário 'comprador' é APENAS comprador
@@ -51,6 +55,7 @@ public class LoginPresenter {
             Usuario usuarioLogado = new Usuario("comprador", "123", "27999990003", "comprador@gmail.com", "Comprador Exclusivo");
             usuarioLogado.setVendedor(false);
             usuarioLogado.setComprador(true);
+            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
             abrirTelaPrincipal(usuarioLogado, new CompradorState()); // Vai direto para o painel de comprador
 
         } else {
