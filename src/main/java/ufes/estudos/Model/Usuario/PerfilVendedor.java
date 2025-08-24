@@ -11,8 +11,8 @@ public class PerfilVendedor extends Usuario{
     private int vendasConcluidas;
     private int denunciasRecebidas;
 
-    private List<String> insignias = new ArrayList<String>();
-    private List<String> selosVisuaisTemporada = new ArrayList<String>();
+    private List<Insignia> insignias = new ArrayList<>();
+    private List<String> selosVisuaisTemporada = new ArrayList<>(); // acho que não coloquei no banco TODO colocar.
 
     private double beneficioClimaticoContribuido;
 
@@ -80,11 +80,11 @@ public class PerfilVendedor extends Usuario{
         this.beneficioClimaticoContribuido = beneficioClimaticoContribuido;
     }
 
-    public List<String> getInsignias() {
+    public List<Insignia> getInsignias() {
         return insignias;
     }
 
-    public void setInsignias(List<String> insignias) {
+    public void setInsignias(List<Insignia> insignias) {
         this.insignias = insignias;
     }
 
