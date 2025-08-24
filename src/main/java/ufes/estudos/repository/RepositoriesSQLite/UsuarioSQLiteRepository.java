@@ -88,6 +88,22 @@ public class UsuarioSQLiteRepository implements UsuarioRepository {
     }
 
     @Override
+    public int contarUsuarios() {
+        String sql = "SELECT COUNT(*) FROM usuarios";
+        try (Connection conn = connManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao contar usuários: " + e.getMessage());
+        }
+        return 0; // Retorna 0 em caso de erro
+    }
+
+    @Override
     public void remover(int id) {
         String sql = "DELETE FROM usuarios WHERE id = ?";
 

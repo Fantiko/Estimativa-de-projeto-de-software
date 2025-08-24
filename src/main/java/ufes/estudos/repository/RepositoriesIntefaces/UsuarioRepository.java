@@ -10,6 +10,7 @@ public interface UsuarioRepository {
     Optional<Usuario> adicionar(Usuario usuario);
     void atualizar(Usuario usuario);
     void remover(int id);
+    int contarUsuarios();
 
     Optional<Usuario> buscarPorId(int id);
     Optional<Usuario> buscarPorUsuario(String usuario);

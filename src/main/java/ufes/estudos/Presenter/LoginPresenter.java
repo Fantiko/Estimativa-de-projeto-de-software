@@ -12,77 +12,78 @@ import ufes.estudos.Views.MainView;
 import ufes.estudos.Views.TelaCadastroEtapa1;
 import ufes.estudos.Views.TelaEscolherPerfil;
 import ufes.estudos.repository.PerfilRepository;
-import ufes.estudos.repository.UsuarioRepository;
+import ufes.estudos.repository.RepositoriesIntefaces.UsuarioRepository;
+import ufes.estudos.repository.RepositoriesSQLite.UsuarioSQLiteRepository;
+import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager; // Import necessário
+import ufes.estudos.service.UsuarioService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Optional;
 
 public class LoginPresenter {
 
     private final ILoginView view;
+    private final UsuarioService usuarioService;
 
     public LoginPresenter(ILoginView view) {
         this.view = view;
+        this.usuarioService = new UsuarioService(new UsuarioSQLiteRepository(new SQLiteConnectionManager()));
         this.view.setLoginListener(e -> autenticar());
         this.view.setCadastrarListener(e -> abrirTelaCadastro());
     }
 
     private void autenticar() {
         String username = view.getUsername();
-        String senha = view.getSenha();
+        String password = view.getSenha();
 
-        // Usuário Administrador
-        if (username.equals("admin") && senha.equals("123")) {
-            Usuario usuarioLogado = new Usuario("admin", "123", "N/A", "admin@sistema.com", "Administrador do Sistema");
-            usuarioLogado.setAdmin(true);
-            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
-            abrirTelaPrincipal(usuarioLogado, new AdminState());
+        if (username.isBlank() || password.isBlank()) {
+            view.exibirMensagem("Usuário e senha são obrigatórios.");
+            return;
+        }
 
-            // MODIFICADO: Usuário 'user' agora é Vendedor E Comprador
-        } else if (username.equals("user") && senha.equals("123")) {
-            Usuario usuarioLogado = new Usuario("user", "123", "27999990001", "user@gmail.com", "Usuário Padrão");
-            usuarioLogado.setVendedor(true);
-            usuarioLogado.setComprador(true);
-            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
-            abrirTelaEscolhaPerfil(usuarioLogado); // Como ele tem os 2 perfis, precisa escolher
+        Optional<Usuario> optionalUsuario = usuarioService.logar(username, password);
 
-            // NOVO: Usuário 'vendedor' é APENAS vendedor
-        } else if (username.equals("vendedor") && senha.equals("123")) {
-            Usuario usuarioLogado = new Usuario("vendedor", "123", "27999990002", "vendedor@gmail.com", "Vendedor Exclusivo");
-            usuarioLogado.setVendedor(true);
-            usuarioLogado.setComprador(false);
-            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
+        if (optionalUsuario.isPresent()) {
+            Usuario usuarioLogado = optionalUsuario.get();
 
-            PerfilRepository perfilRepository = PerfilRepository.getInstance();
-            if (perfilRepository.getVendedor(usuarioLogado.getNome()) == null) {
-                perfilRepository.addVendedor(new PerfilVendedor(usuarioLogado));
+            if (usuarioLogado.isAdmin()) {
+                abrirTelaPrincipal(usuarioLogado, new AdminState());
+            } else if (usuarioLogado.isVendedor() && usuarioLogado.isComprador()) {
+                abrirTelaEscolhaPerfil(usuarioLogado);
+            } else if (usuarioLogado.isVendedor()) {
+                carregarPerfilVendedor(usuarioLogado); // Método que estava faltando
+                abrirTelaPrincipal(usuarioLogado, new VendedorState());
+            } else if (usuarioLogado.isComprador()) {
+                carregarPerfilComprador(usuarioLogado); // Método que estava faltando
+                abrirTelaPrincipal(usuarioLogado, new CompradorState());
+            } else {
+                view.exibirMensagem("Usuário não possui um perfil de Vendedor ou Comprador. Contate o administrador.");
             }
-
-            abrirTelaPrincipal(usuarioLogado, new VendedorState());
-             // Vai direto para o painel de vendedor
-
-            // NOVO: Usuário 'comprador' é APENAS comprador
-        } else if (username.equals("comprador") && senha.equals("123")) {
-            Usuario usuarioLogado = new Usuario("comprador", "123", "27999990003", "comprador@gmail.com", "Comprador Exclusivo");
-            usuarioLogado.setVendedor(false);
-            usuarioLogado.setComprador(true);
-            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
-            // --- LÓGICA DE 'GET-OR-CREATE' ---
-            PerfilRepository perfilRepository = PerfilRepository.getInstance();
-            if (perfilRepository.getComprador(usuarioLogado.getNome()) == null) {
-                perfilRepository.addComprador(new PerfilComprador(usuarioLogado));
-            }
-            // <<< ADICIONE
-            abrirTelaPrincipal(usuarioLogado, new CompradorState()); // Vai direto para o painel de comprador
-
         } else {
-            JOptionPane.showMessageDialog((Component) view, "Login ou senha incorretos!");
+            view.exibirMensagem("Usuário ou senha inválidos.");
         }
     }
 
+    // --- MÉTODOS ADICIONADOS AQUI ---
+    private void carregarPerfilVendedor(Usuario usuario) {
+        PerfilRepository perfilRepository = PerfilRepository.getInstance();
+        if (perfilRepository.getVendedor(usuario.getNome()) == null) {
+            perfilRepository.addVendedor(new PerfilVendedor(usuario));
+        }
+    }
+
+    private void carregarPerfilComprador(Usuario usuario) {
+        PerfilRepository perfilRepository = PerfilRepository.getInstance();
+        if (perfilRepository.getComprador(usuario.getNome()) == null) {
+            perfilRepository.addComprador(new PerfilComprador(usuario));
+        }
+    }
+    // --- FIM DA ADIÇÃO ---
+
     private void abrirTelaEscolhaPerfil(Usuario usuarioLogado) {
-        if (view instanceof javax.swing.JFrame) {
-            ((javax.swing.JFrame) view).dispose();
+        if (view instanceof JFrame) {
+            ((JFrame) view).dispose();
         }
         TelaEscolherPerfil telaPerfil = new TelaEscolherPerfil();
         new EscolherPerfilPresenter(telaPerfil, usuarioLogado);
@@ -90,18 +91,17 @@ public class LoginPresenter {
     }
 
     private void abrirTelaCadastro() {
-        if (view instanceof javax.swing.JFrame) {
-            ((javax.swing.JFrame) view).dispose();
+        if (view instanceof JFrame) {
+            ((JFrame) view).dispose();
         }
         TelaCadastroEtapa1 telaCadastroEtapa1 = new TelaCadastroEtapa1(null);
         new CadastroEtapa1Presenter(telaCadastroEtapa1, null);
         telaCadastroEtapa1.setVisible(true);
     }
 
-    // Método genérico para abrir a tela principal
     private void abrirTelaPrincipal(Usuario usuarioLogado, IMainState state) {
-        if (view instanceof javax.swing.JFrame) {
-            ((javax.swing.JFrame) view).dispose();
+        if (view instanceof JFrame) {
+            ((JFrame) view).dispose();
         }
         MainView mainView = new MainView();
         new MainPresenter(mainView, state, usuarioLogado);

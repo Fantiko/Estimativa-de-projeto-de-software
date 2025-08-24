@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class SQLiteConnectionManager implements ConnectionManager{
 
-    public static final  String URL_BD = "jdbc:sqlite:Bd/loja.db";
+    public static final  String URL_BD = "jdbc:sqlite:src/main/java/ufes/estudos/Bd/loja.db";
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL_BD);

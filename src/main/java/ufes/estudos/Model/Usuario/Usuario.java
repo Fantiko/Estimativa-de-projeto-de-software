@@ -7,21 +7,15 @@ public class Usuario {
     private String razaoSocial;
     private String email;
     private String telefone;
-    private LocalDateTime dataCriacao;  //automático
-
+    private LocalDateTime dataCriacao;
     private String usuario;
     private String senha;
-
     private boolean vendedor;
     private boolean comprador;
-
     private boolean admin = false;
-
     private int id;
 
-    //construtor para o repository
     public Usuario() {
-
     }
 
     public Usuario(String usuario, String senha) {
@@ -30,13 +24,18 @@ public class Usuario {
         this.dataCriacao = LocalDateTime.now();
     }
 
-    // CONSTRUTOR CRIADO PARA COPIAR OUTRO USUÁRIO
     public Usuario(Usuario usuario) {
         this.nomeCompleto = usuario.nomeCompleto;
         this.email = usuario.email;
         this.senha = usuario.senha;
         this.dataCriacao = usuario.dataCriacao;
         this.admin = usuario.admin;
+        this.id = usuario.id;
+        this.telefone = usuario.telefone;
+        this.razaoSocial = usuario.razaoSocial;
+        this.vendedor = usuario.vendedor;
+        this.comprador = usuario.comprador;
+        this.usuario = usuario.usuario;
     }
 
     public Usuario(String usuario, String senha, String telefone, String email, String nomeCompleto) {
@@ -45,10 +44,8 @@ public class Usuario {
         this.dataCriacao = LocalDateTime.now();
         this.telefone = telefone;
         this.email = email;
-        this.razaoSocial = razaoSocial;
         this.nomeCompleto = nomeCompleto;
     }
-
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
@@ -58,9 +55,11 @@ public class Usuario {
         return nomeCompleto;
     }
 
+    // --- MÉTODO CORRIGIDO AQUI ---
     public void setNome(String nomeCompleto) {
-        this.nomeCompleto = this.nomeCompleto;
+        this.nomeCompleto = nomeCompleto; // Atribui o parâmetro ao campo da classe
     }
+    // --- FIM DA CORREÇÃO ---
 
     public String getSenha() {
         return senha;
@@ -130,7 +129,6 @@ public class Usuario {
         this.id = id;
     }
 
-    // Dentro da classe Usuario.java
     public boolean isAdmin() {
         return admin;
     }
@@ -138,5 +136,4 @@ public class Usuario {
     public void setAdmin(boolean admin) {
         this.admin = admin;
     }
-
 }
