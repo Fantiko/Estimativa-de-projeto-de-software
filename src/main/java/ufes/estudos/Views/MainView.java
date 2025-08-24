@@ -89,9 +89,18 @@ public class MainView extends JFrame implements IMainView {
             telaGerenciar.setVisible(true);
         });
 
+        JButton btnGerenciarOfertas = new JButton("Gerenciar Ofertas");
+        btnGerenciarOfertas.addActionListener(e -> {
+            TelaGerenciarOfertas tela = new TelaGerenciarOfertas();
+            new GerenciarOfertasPresenter(tela, usuario);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
         abrirInternalFrame("Menu Vendedor",
                 btnAdicionar,
-                btnGerenciar
+                btnGerenciar,
+                btnGerenciarOfertas
         );
     }
 
@@ -100,14 +109,23 @@ public class MainView extends JFrame implements IMainView {
         JButton btnAbrirCatalogo = new JButton("Abrir Catálogo");
         btnAbrirCatalogo.addActionListener(e -> {
             TelaCatalogo tela = new TelaCatalogo();
-            new CatalogoPresenter(tela, usuario); // <<< LINHA MODIFICADA
+            new CatalogoPresenter(tela, usuario);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
+        JButton btnMinhasOfertas = new JButton("Minhas Ofertas (Carrinho)");
+        btnMinhasOfertas.addActionListener(e -> {
+            TelaMinhasOfertas tela = new TelaMinhasOfertas();
+            new MinhasOfertasPresenter(tela, usuario);
             desktopPane.add(tela);
             tela.setVisible(true);
         });
 
         abrirInternalFrame("Menu Comprador",
                 btnAbrirCatalogo,
-                new JButton("Meu Histórico de Compras") // Apenas um botão de placeholder
+                btnMinhasOfertas,
+                new JButton("Meu Histórico de Compras")
         );
     }
 

@@ -3,9 +3,12 @@ package ufes.estudos.Presenter;
 import ufes.estudos.Model.State.CompradorState;
 import ufes.estudos.Model.State.IMainState;
 import ufes.estudos.Model.State.VendedorState;
+import ufes.estudos.Model.Usuario.PerfilComprador;
+import ufes.estudos.Model.Usuario.PerfilVendedor;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.IEscolherPerfilView;
 import ufes.estudos.Views.MainView;
+import ufes.estudos.repository.PerfilRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,14 +31,21 @@ public class EscolherPerfilPresenter {
                 view.mostrarMensagem("Selecione um perfil para continuar!");
                 return;
             }
+            // Dentro do método inicializar() do EscolherPerfilPresenter
+// ...
             IMainState state;
             if (view.isVendedorSelecionado()) {
                 usuario.setVendedor(true);
                 state = new VendedorState();
+                // Adiciona o perfil ao repositório
+                PerfilRepository.getInstance().addVendedor(new PerfilVendedor(usuario));
             } else {
                 usuario.setComprador(true);
                 state = new CompradorState();
+                // Adiciona o perfil ao repositório
+                PerfilRepository.getInstance().addComprador(new PerfilComprador(usuario));
             }
+// ...
             view.fechar();
 
 

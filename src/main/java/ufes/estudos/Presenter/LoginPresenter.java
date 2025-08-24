@@ -4,11 +4,14 @@ import ufes.estudos.Model.State.AdminState;
 import ufes.estudos.Model.State.CompradorState;
 import ufes.estudos.Model.State.IMainState;
 import ufes.estudos.Model.State.VendedorState;
+import ufes.estudos.Model.Usuario.PerfilComprador;
+import ufes.estudos.Model.Usuario.PerfilVendedor;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.ILoginView;
 import ufes.estudos.Views.MainView;
 import ufes.estudos.Views.TelaCadastroEtapa1;
 import ufes.estudos.Views.TelaEscolherPerfil;
+import ufes.estudos.repository.PerfilRepository;
 import ufes.estudos.repository.UsuarioRepository;
 
 import javax.swing.*;
@@ -48,7 +51,9 @@ public class LoginPresenter {
             usuarioLogado.setVendedor(true);
             usuarioLogado.setComprador(false);
             UsuarioRepository.getInstance().addUsuario(usuarioLogado);
-            abrirTelaPrincipal(usuarioLogado, new VendedorState()); // Vai direto para o painel de vendedor
+            PerfilRepository.getInstance().addVendedor(new PerfilVendedor(usuarioLogado)); // <<< ADICIONE
+            abrirTelaPrincipal(usuarioLogado, new VendedorState());
+             // Vai direto para o painel de vendedor
 
             // NOVO: Usuário 'comprador' é APENAS comprador
         } else if (username.equals("comprador") && senha.equals("123")) {
@@ -56,6 +61,7 @@ public class LoginPresenter {
             usuarioLogado.setVendedor(false);
             usuarioLogado.setComprador(true);
             UsuarioRepository.getInstance().addUsuario(usuarioLogado);
+            PerfilRepository.getInstance().addComprador(new PerfilComprador(usuarioLogado)); // <<< ADICIONE
             abrirTelaPrincipal(usuarioLogado, new CompradorState()); // Vai direto para o painel de comprador
 
         } else {
