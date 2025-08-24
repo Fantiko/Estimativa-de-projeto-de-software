@@ -5,41 +5,42 @@ import java.util.List;
 
 public class PerfilComprador extends Usuario {
 
-    private int nivelReputacao;
-    private int totalEstrelas;
+    // --- CAMPOS MODIFICADOS ---
+    private NivelReputacao nivelReputacao;
+    private double totalEstrelas;
+    // --- FIM DA MODIFICAÇÃO ---
 
     private int comprasFinalizadas;
-
-    private List<String> insigniasPermanentes = new ArrayList<String>();
-
+    private List<String> insigniasPermanentes = new ArrayList<>();
     private boolean seloVerificado;
-
     private double CO2Evitado;
     private double estatisticaDenunciasProcedentes;
 
-
     public PerfilComprador(Usuario usuario) {
         super(usuario);
-        this.totalEstrelas = 0;
-        this.nivelReputacao = 0;
+        this.nivelReputacao = NivelReputacao.bronze; // Inicializa como Bronze
+        this.totalEstrelas = 0.0; // Inicializa com 0.0 estrelas
         this.comprasFinalizadas = 0;
     }
 
-    public int getTotalEstrelas() {
+    // --- MÉTODOS GET/SET CORRIGIDOS ---
+    public double getTotalEstrelas() {
         return totalEstrelas;
     }
 
-    public void setTotalEstrelas(int totalEstrelas) {
+    public void setTotalEstrelas(double totalEstrelas) {
         this.totalEstrelas = totalEstrelas;
     }
 
-    public int getNivel() {
+    public NivelReputacao getNivelReputacao() {
         return nivelReputacao;
     }
 
-    public void setNivel(int nivel) {
-        this.nivelReputacao = nivel;
+    public void setNivelReputacao(NivelReputacao nivelReputacao) {
+        this.nivelReputacao = nivelReputacao;
     }
+    // --- FIM DA CORREÇÃO ---
+
 
     public int getComprasFinalizadas() {
         return comprasFinalizadas;
@@ -81,5 +82,3 @@ public class PerfilComprador extends Usuario {
         this.seloVerificado = seloVerificado;
     }
 }
-
-

@@ -34,6 +34,7 @@ public class LoginPresenter {
         // Usuário Administrador
         if (username.equals("admin") && senha.equals("123")) {
             Usuario usuarioLogado = new Usuario("admin", "123", "N/A", "admin@sistema.com", "Administrador do Sistema");
+            usuarioLogado.setAdmin(true);
             UsuarioRepository.getInstance().addUsuario(usuarioLogado);
             abrirTelaPrincipal(usuarioLogado, new AdminState());
 
