@@ -3,7 +3,6 @@ package ufes.estudos.service;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.repository.RepositoriesIntefaces.UsuarioRepository;
 import ufes.estudos.service.ServiceInterfaces.UsuarioServiceInterface;
-
 import java.util.Optional;
 
 public class UsuarioService implements UsuarioServiceInterface {
@@ -14,27 +13,39 @@ public class UsuarioService implements UsuarioServiceInterface {
     }
 
     @Override
-    public boolean logar(String usuarioDigitado, String senhaDigitada) {
-        Optional<Usuario> usuarioNoBanco = usuarioRepository.buscarPorUsuario(usuarioDigitado);
+    public Optional<Usuario> logar(String usuarioDigitado, String senhaDigitada) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.buscarPorUsuario(usuarioDigitado);
 
-        if (usuarioNoBanco.isPresent()) {
-            Usuario usuario = usuarioNoBanco.get();
-            //TODO COLOCAR HASH DE SENHA AQUI
-            return verificarSenha(senhaDigitada, usuario.getSenha());
+        if (optionalUsuario.isPresent()) {
+            Usuario usuarioDoBanco = optionalUsuario.get();
+            if (senhaDigitada.equals(usuarioDoBanco.getSenha())) {
+                return optionalUsuario;
+            }
         }
-
-        return false;
+        return Optional.empty();
     }
 
     @Override
     public Optional<Usuario> registrar(Usuario usuario) {
+        if(usuarioRepository.buscarPorUsuario(usuario.getUsuario()).isPresent()){
+            return Optional.empty();
+        }
         return usuarioRepository.adicionar(usuario);
     }
 
-    // Método auxiliar para a lógica de verificação de senha
-    private boolean verificarSenha(String senhaDigitada, String senhaArmazenada) {
-        // Lógica de hash e comparação aqui
-        return senhaDigitada.equals(senhaArmazenada);
+    @Override
+    public void atualizar(Usuario usuario) {
+        usuarioRepository.atualizar(usuario);
     }
 
+    @Override
+    public Optional<Usuario> buscarPorUsuario(String username) {
+        return usuarioRepository.buscarPorUsuario(username);
+    }
+
+    // --- MÉTODO ADICIONADO AQUI ---
+    @Override
+    public long totalUsuarios() {
+        return usuarioRepository.contarUsuarios();
+    }
 }
