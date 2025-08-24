@@ -86,6 +86,7 @@ public class MainView extends JFrame implements IMainView {
 
     @Override
     public void exibirMenuVendedor(Usuario usuario) {
+        // ... (Botões btnAdicionar, btnGerenciar, btnGerenciarOfertas, btnMeuPerfil permanecem iguais)
         JButton btnAdicionar = new JButton("Adicionar Anúncio");
         btnAdicionar.addActionListener(e -> {
             TelaAdicionarAnuncio telaAnuncio = new TelaAdicionarAnuncio();
@@ -113,11 +114,22 @@ public class MainView extends JFrame implements IMainView {
         JButton btnMeuPerfil = new JButton("Meus Dados do Perfil");
         btnMeuPerfil.addActionListener(getAbrirPerfilListener(usuario, new VendedorState()));
 
+        // <<< BOTÃO NOVO ADICIONADO AQUI >>>
+        JButton btnHistoricoVendas = new JButton("Meu Histórico de Vendas");
+        btnHistoricoVendas.addActionListener(e -> {
+            TelaHistoricoVendas tela = new TelaHistoricoVendas();
+            new HistoricoVendasPresenter(tela, usuario);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
+
         abrirInternalFrame("Menu Vendedor",
                 btnAdicionar,
                 btnGerenciar,
                 btnGerenciarOfertas,
-                btnMeuPerfil // <<< BOTÃO ADICIONADO AQUI
+                btnMeuPerfil,
+                btnHistoricoVendas // <<< BOTÃO ADICIONADO À JANELA
         );
     }
 

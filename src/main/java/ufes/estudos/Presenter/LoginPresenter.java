@@ -52,7 +52,12 @@ public class LoginPresenter {
             usuarioLogado.setVendedor(true);
             usuarioLogado.setComprador(false);
             UsuarioRepository.getInstance().addUsuario(usuarioLogado);
-            PerfilRepository.getInstance().addVendedor(new PerfilVendedor(usuarioLogado)); // <<< ADICIONE
+
+            PerfilRepository perfilRepository = PerfilRepository.getInstance();
+            if (perfilRepository.getVendedor(usuarioLogado.getNome()) == null) {
+                perfilRepository.addVendedor(new PerfilVendedor(usuarioLogado));
+            }
+
             abrirTelaPrincipal(usuarioLogado, new VendedorState());
              // Vai direto para o painel de vendedor
 
@@ -62,7 +67,12 @@ public class LoginPresenter {
             usuarioLogado.setVendedor(false);
             usuarioLogado.setComprador(true);
             UsuarioRepository.getInstance().addUsuario(usuarioLogado);
-            PerfilRepository.getInstance().addComprador(new PerfilComprador(usuarioLogado)); // <<< ADICIONE
+            // --- LÓGICA DE 'GET-OR-CREATE' ---
+            PerfilRepository perfilRepository = PerfilRepository.getInstance();
+            if (perfilRepository.getComprador(usuarioLogado.getNome()) == null) {
+                perfilRepository.addComprador(new PerfilComprador(usuarioLogado));
+            }
+            // <<< ADICIONE
             abrirTelaPrincipal(usuarioLogado, new CompradorState()); // Vai direto para o painel de comprador
 
         } else {
