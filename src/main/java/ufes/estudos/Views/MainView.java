@@ -1,5 +1,8 @@
 package ufes.estudos.Views;
 
+import ufes.estudos.Model.State.CompradorState;
+import ufes.estudos.Model.State.VendedorState;
+import ufes.estudos.Model.State.IMainState;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Presenter.*;
 import ufes.estudos.Presenter.GerenciarAnunciosPresenter;
@@ -61,6 +64,16 @@ public class MainView extends JFrame implements IMainView {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
+    // Adicione esta ação dentro da classe MainView
+    private ActionListener getAbrirPerfilListener(Usuario usuario, IMainState estado) {
+        return e -> {
+            TelaMeuPerfil tela = new TelaMeuPerfil();
+            new MeuPerfilPresenter(tela, usuario, estado);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        };
+    }
+
     @Override
     public void setTitulo(String titulo) {
         lblTitulo.setText(titulo);
@@ -72,11 +85,11 @@ public class MainView extends JFrame implements IMainView {
     }
 
     @Override
-    public void exibirMenuVendedor(Usuario usuario) { // PARÂMETRO ADICIONADO
+    public void exibirMenuVendedor(Usuario usuario) {
         JButton btnAdicionar = new JButton("Adicionar Anúncio");
         btnAdicionar.addActionListener(e -> {
             TelaAdicionarAnuncio telaAnuncio = new TelaAdicionarAnuncio();
-            new AdicionarAnuncioPresenter(telaAnuncio, usuario); // USUÁRIO PASSADO AQUI
+            new AdicionarAnuncioPresenter(telaAnuncio, usuario);
             desktopPane.add(telaAnuncio);
             telaAnuncio.setVisible(true);
         });
@@ -84,7 +97,7 @@ public class MainView extends JFrame implements IMainView {
         JButton btnGerenciar = new JButton("Gerenciar Anúncios");
         btnGerenciar.addActionListener(e -> {
             TelaGerenciarAnuncios telaGerenciar = new TelaGerenciarAnuncios(desktopPane);
-            new GerenciarAnunciosPresenter(telaGerenciar, usuario); // <<< LINHA MODIFICADA
+            new GerenciarAnunciosPresenter(telaGerenciar, usuario);
             desktopPane.add(telaGerenciar);
             telaGerenciar.setVisible(true);
         });
@@ -97,10 +110,14 @@ public class MainView extends JFrame implements IMainView {
             tela.setVisible(true);
         });
 
+        JButton btnMeuPerfil = new JButton("Meus Dados do Perfil");
+        btnMeuPerfil.addActionListener(getAbrirPerfilListener(usuario, new VendedorState()));
+
         abrirInternalFrame("Menu Vendedor",
                 btnAdicionar,
                 btnGerenciar,
-                btnGerenciarOfertas
+                btnGerenciarOfertas,
+                btnMeuPerfil // <<< BOTÃO ADICIONADO AQUI
         );
     }
 
@@ -122,15 +139,23 @@ public class MainView extends JFrame implements IMainView {
             tela.setVisible(true);
         });
 
+        // Botão do perfil que faltava ser adicionado ao frame
+        JButton btnMeuPerfil = new JButton("Meus Dados do Perfil");
+        btnMeuPerfil.addActionListener(getAbrirPerfilListener(usuario, new CompradorState()));
+
+        // --- CORREÇÃO ESTÁ AQUI ---
+        // Adicionamos o 'btnMeuPerfil' à lista de botões a serem exibidos.
         abrirInternalFrame("Menu Comprador",
                 btnAbrirCatalogo,
                 btnMinhasOfertas,
+                btnMeuPerfil, // <<< BOTÃO ADICIONADO AQUI
                 new JButton("Meu Histórico de Compras")
         );
     }
 
+
     @Override
-    public void exibirMenuAdmin() {
+    public void exibirMenuAdmin(Usuario usuario) {
         JButton btnAprovar = new JButton("Aprovar Perfis");
         btnAprovar.addActionListener(e -> {
             TelaAprovarPerfis tela = new TelaAprovarPerfis();
@@ -139,8 +164,14 @@ public class MainView extends JFrame implements IMainView {
             tela.setVisible(true);
         });
 
+        JButton btnMeuPerfil = new JButton("Meus Dados do Perfil");
+        // Para o admin, podemos mostrar o perfil de vendedor como padrão, ou criar uma tela específica.
+        // Por ora, ele verá o perfil de vendedor se tiver um.
+        btnMeuPerfil.addActionListener(getAbrirPerfilListener(usuario, new VendedorState()));
+
         abrirInternalFrame("Menu Administrador",
                 btnAprovar,
+                btnMeuPerfil, // <<< BOTÃO ADICIONADO AQUI
                 new JButton("Visualizar Logs")
         );
     }

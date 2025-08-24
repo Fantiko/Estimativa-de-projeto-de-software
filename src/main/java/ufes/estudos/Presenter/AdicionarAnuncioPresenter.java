@@ -6,7 +6,9 @@ import ufes.estudos.Model.Item.Material;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.IAdicionarAnuncioView;
 import ufes.estudos.repository.AnuncioRepository;
+import ufes.estudos.repository.PerfilRepository;
 import ufes.estudos.service.IdService; // 1. Importar o novo serviço
+import ufes.estudos.service.ReputacaoService;
 
 import java.awt.event.ActionEvent;
 import java.util.Collections;
@@ -118,6 +120,7 @@ public class AdicionarAnuncioPresenter {
             );
 
             anuncioRepository.addAnuncio(novoItem);
+            ReputacaoService.getInstance().processarCadastroItemCompleto(PerfilRepository.getInstance().getVendedor(usuario.getNome()));
             view.exibirMensagem("Anúncio salvo com sucesso!\nID-C: " + novoItem.getIdentificadorCircular());
             view.fechar();
 

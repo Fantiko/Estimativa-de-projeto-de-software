@@ -5,8 +5,8 @@ import ufes.estudos.Views.IMainView;
 
 public class AdminState implements IMainState {
     @Override
-    public void configurarTela(IMainView view, Usuario usuario) { // PARÂMETRO ADICIONADO
+    public void configurarTela(IMainView view, Usuario usuario) {
         view.setTitulo("Painel Administrativo");
-        view.exibirMenuAdmin();
+        view.exibirMenuAdmin(usuario); // <<< PASSE O USUÁRIO AQUI
     }
 }

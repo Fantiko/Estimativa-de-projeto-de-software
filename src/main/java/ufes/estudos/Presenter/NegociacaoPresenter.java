@@ -5,6 +5,8 @@ import ufes.estudos.Model.transacao.Oferta;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.INegociacaoView;
 import ufes.estudos.repository.OfertaRepository;
+import ufes.estudos.repository.PerfilRepository;
+import ufes.estudos.service.*;
 
 public class NegociacaoPresenter {
     private final INegociacaoView view;
@@ -46,6 +48,7 @@ public class NegociacaoPresenter {
             Oferta novaOferta = new Oferta(item.getIdentificadorCircular(), comprador.getNome(), item.getNomeVendedor(), valorOfertado);
             OfertaRepository.getInstance().addOferta(novaOferta);
 
+            ReputacaoService.getInstance().processarOfertaEnviada(PerfilRepository.getInstance().getComprador(comprador.getNome()));
             view.exibirMensagem("Oferta enviada com sucesso!");
             view.fechar();
 

@@ -1,18 +1,21 @@
 package ufes.estudos.Presenter;
 
-import ufes.estudos.Model.Item.Item; // Importante
-import ufes.estudos.Model.transacao.Oferta;
-import ufes.estudos.Model.Usuario.PerfilComprador; // Importante
-import ufes.estudos.Model.Usuario.PerfilVendedor; // Importante
+import ufes.estudos.Model.Item.Item;
+import ufes.estudos.Model.transacao.Oferta; // Mantive seu pacote 'transacao'
+import ufes.estudos.Model.Usuario.PerfilComprador;
+import ufes.estudos.Model.Usuario.PerfilVendedor;
 import ufes.estudos.Model.Usuario.Usuario;
-import ufes.estudos.Model.transacao.Venda; // Importante
+import ufes.estudos.Model.transacao.Venda; // Mantive seu pacote 'transacao'
 import ufes.estudos.Views.IGerenciarOfertasView;
 import ufes.estudos.observer.Observer;
 import ufes.estudos.repository.AnuncioRepository;
 import ufes.estudos.repository.OfertaRepository;
-import ufes.estudos.repository.PerfilRepository; // Importante
-import ufes.estudos.repository.VendaRepository; // Importante
+import ufes.estudos.repository.PerfilRepository;
+import ufes.estudos.repository.VendaRepository;
+import ufes.estudos.service.ReputacaoService;
 
+import java.time.Duration; // <<< IMPORT ADICIONADO
+import java.time.LocalDateTime; // <<< IMPORT ADICIONADO
 import java.util.stream.Collectors;
 import java.util.List;
 
@@ -57,6 +60,11 @@ public class GerenciarOfertasPresenter implements Observer {
         }
         Oferta ofertaSelecionada = getOfertaSelecionada(selectedRow);
         if (ofertaSelecionada != null) {
+            // A lógica de pontuação por resposta rápida também se aplica à recusa
+            Duration duracao = Duration.between(ofertaSelecionada.getDataOferta(), LocalDateTime.now());
+            boolean dentroDoPrazo = duracao.toHours() < 24;
+            ReputacaoService.getInstance().processarRespostaOferta(perfilRepository.getVendedor(vendedorUsuario.getNome()), dentroDoPrazo);
+
             ofertaRepository.removeOferta(ofertaSelecionada);
             view.exibirMensagem("Oferta recusada.");
         }
@@ -75,14 +83,11 @@ public class GerenciarOfertasPresenter implements Observer {
         Item itemVendido = anuncioRepository.findByIdc(idcItemVendido);
         if (itemVendido == null) {
             view.exibirMensagem("Erro: O item do anúncio não foi encontrado.");
+            ofertaRepository.removerOfertasPorItem(idcItemVendido); // Limpa ofertas órfãs
             return;
         }
 
-        // 1. CALCULAR O GWP EVITADO FINAL
-        // Neste momento, a estimativa se torna o valor definitivo
         double gwpEvitado = itemVendido.getGwpAvoided();
-
-        // 2. ATUALIZAR OS PERFIS
         PerfilVendedor perfilVendedor = perfilRepository.getVendedor(ofertaGanhadora.getNomeVendedor());
         PerfilComprador perfilComprador = perfilRepository.getComprador(ofertaGanhadora.getNomeComprador());
 
@@ -94,11 +99,17 @@ public class GerenciarOfertasPresenter implements Observer {
             perfilComprador.setComprasFinalizadas(perfilComprador.getComprasFinalizadas() + 1);
         }
 
-        // 3. REGISTRAR A VENDA
         Venda novaVenda = new Venda(idcItemVendido, ofertaGanhadora.getNomeComprador(), ofertaGanhadora.getNomeVendedor(), ofertaGanhadora.getValorOfertado(), gwpEvitado);
         vendaRepository.addVenda(novaVenda);
 
-        // 4. LIMPAR O MERCADO
+        // Atribui pontos pela venda concluída
+        ReputacaoService.getInstance().processarVendaConcluida(ofertaGanhadora.getNomeVendedor(), ofertaGanhadora.getNomeComprador());
+
+        // Atribui pontos pela resposta rápida
+        Duration duracao = Duration.between(ofertaGanhadora.getDataOferta(), LocalDateTime.now());
+        boolean dentroDoPrazo = duracao.toHours() < 24;
+        ReputacaoService.getInstance().processarRespostaOferta(perfilVendedor, dentroDoPrazo);
+
         anuncioRepository.deleteAnuncio(idcItemVendido);
         ofertaRepository.removerOfertasPorItem(idcItemVendido);
 
