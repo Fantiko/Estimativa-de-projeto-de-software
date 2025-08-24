@@ -8,4 +8,6 @@ public interface UsuarioServiceInterface {
     boolean logar(String usuario, String senha);
     Optional<Usuario> registrar(Usuario usuario);
 
+
+
 }

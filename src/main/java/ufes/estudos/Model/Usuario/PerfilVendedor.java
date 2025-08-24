@@ -13,9 +13,6 @@ public class PerfilVendedor extends Usuario{
 
     private List<Insignia> insignias = new ArrayList<>();
 
-
-    //private List<String> selosVisuaisTemporada = new ArrayList<>(); // nao precisa
-
     private double beneficioClimaticoContribuido;
 
     private List<Item> catalogo;
