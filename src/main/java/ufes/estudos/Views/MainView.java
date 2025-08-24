@@ -1,9 +1,10 @@
 package ufes.estudos.Views;
 
+import ufes.estudos.Model.State.CompradorState;
+import ufes.estudos.Model.State.VendedorState;
+import ufes.estudos.Model.State.IMainState;
 import ufes.estudos.Model.Usuario.Usuario;
-import ufes.estudos.Presenter.AdicionarAnuncioPresenter;
-import ufes.estudos.Presenter.CatalogoPresenter;
-import ufes.estudos.Presenter.GerenciarAnunciosPresenter;
+import ufes.estudos.Presenter.*;
 import ufes.estudos.Presenter.GerenciarAnunciosPresenter;
 import ufes.estudos.Views.TelaGerenciarAnuncios; // Importar a classe concreta
 
@@ -17,6 +18,7 @@ public class MainView extends JFrame implements IMainView {
     private final JButton btnLogout;
     private final JButton btnTrocarPerfil;
     private final JDesktopPane desktopPane;
+    private final JLabel lblUsuarioLogado;
 
     // Variáveis para controlar a posição em cascata das janelas
     private int cascadeX = 20;
@@ -36,18 +38,40 @@ public class MainView extends JFrame implements IMainView {
         desktopPane = new JDesktopPane();
         add(desktopPane, BorderLayout.CENTER);
 
-        // Rodapé com botão de logout
+        // --- RODAPÉ MODIFICADO ---
+        JPanel painelRodape = new JPanel(new BorderLayout()); // Layout modificado
+        painelRodape.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+        // Nome do usuário à esquerda
+        lblUsuarioLogado = new JLabel();
+        lblUsuarioLogado.setFont(new Font("Roboto", Font.ITALIC, 12));
+        painelRodape.add(lblUsuarioLogado, BorderLayout.WEST);
+
+        // Botões à direita
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btnLogout = new JButton("Logout");
-        btnTrocarPerfil = new JButton(); // <<< ADICIONE ESTA LINHA
-        JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        painelRodape.add(btnTrocarPerfil); // <<< ADICIONE ESTA LINHA
-        painelRodape.add(btnLogout);
+        btnTrocarPerfil = new JButton();
+        painelBotoes.add(btnTrocarPerfil);
+        painelBotoes.add(btnLogout);
+        painelRodape.add(painelBotoes, BorderLayout.EAST);
+
         add(painelRodape, BorderLayout.SOUTH);
+        // --- FIM DA MODIFICAÇÃO DO RODAPÉ ---
 
         // Configurações da janela principal
         setSize(800, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    // Adicione esta ação dentro da classe MainView
+    private ActionListener getAbrirPerfilListener(Usuario usuario, IMainState estado) {
+        return e -> {
+            TelaMeuPerfil tela = new TelaMeuPerfil();
+            new MeuPerfilPresenter(tela, usuario, estado);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        };
     }
 
     @Override
@@ -56,11 +80,17 @@ public class MainView extends JFrame implements IMainView {
     }
 
     @Override
-    public void exibirMenuVendedor(Usuario usuario) { // PARÂMETRO ADICIONADO
+    public void setNomeUsuarioLogado(String nomeUsuario) {
+        lblUsuarioLogado.setText("Usuário: " + nomeUsuario);
+    }
+
+    @Override
+    public void exibirMenuVendedor(Usuario usuario) {
+        // ... (Botões btnAdicionar, btnGerenciar, btnGerenciarOfertas, btnMeuPerfil permanecem iguais)
         JButton btnAdicionar = new JButton("Adicionar Anúncio");
         btnAdicionar.addActionListener(e -> {
             TelaAdicionarAnuncio telaAnuncio = new TelaAdicionarAnuncio();
-            new AdicionarAnuncioPresenter(telaAnuncio, usuario); // USUÁRIO PASSADO AQUI
+            new AdicionarAnuncioPresenter(telaAnuncio, usuario);
             desktopPane.add(telaAnuncio);
             telaAnuncio.setVisible(true);
         });
@@ -68,14 +98,38 @@ public class MainView extends JFrame implements IMainView {
         JButton btnGerenciar = new JButton("Gerenciar Anúncios");
         btnGerenciar.addActionListener(e -> {
             TelaGerenciarAnuncios telaGerenciar = new TelaGerenciarAnuncios(desktopPane);
-            new GerenciarAnunciosPresenter(telaGerenciar, usuario); // <<< LINHA MODIFICADA
+            new GerenciarAnunciosPresenter(telaGerenciar, usuario);
             desktopPane.add(telaGerenciar);
             telaGerenciar.setVisible(true);
         });
 
+        JButton btnGerenciarOfertas = new JButton("Gerenciar Ofertas");
+        btnGerenciarOfertas.addActionListener(e -> {
+            TelaGerenciarOfertas tela = new TelaGerenciarOfertas();
+            new GerenciarOfertasPresenter(tela, usuario);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
+        JButton btnMeuPerfil = new JButton("Meus Dados do Perfil");
+        btnMeuPerfil.addActionListener(getAbrirPerfilListener(usuario, new VendedorState()));
+
+        // <<< BOTÃO NOVO ADICIONADO AQUI >>>
+        JButton btnHistoricoVendas = new JButton("Meu Histórico de Vendas");
+        btnHistoricoVendas.addActionListener(e -> {
+            TelaHistoricoVendas tela = new TelaHistoricoVendas();
+            new HistoricoVendasPresenter(tela, usuario);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
+
         abrirInternalFrame("Menu Vendedor",
                 btnAdicionar,
-                btnGerenciar
+                btnGerenciar,
+                btnGerenciarOfertas,
+                btnMeuPerfil,
+                btnHistoricoVendas // <<< BOTÃO ADICIONADO À JANELA
         );
     }
 
@@ -84,21 +138,58 @@ public class MainView extends JFrame implements IMainView {
         JButton btnAbrirCatalogo = new JButton("Abrir Catálogo");
         btnAbrirCatalogo.addActionListener(e -> {
             TelaCatalogo tela = new TelaCatalogo();
-            new CatalogoPresenter(tela, usuario); // <<< LINHA MODIFICADA
+            new CatalogoPresenter(tela, usuario);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
+        JButton btnMinhasOfertas = new JButton("Minhas Ofertas (Carrinho)");
+        btnMinhasOfertas.addActionListener(e -> {
+            TelaMinhasOfertas tela = new TelaMinhasOfertas();
+            new MinhasOfertasPresenter(tela, usuario);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
+        // Botão do perfil que faltava ser adicionado ao frame
+        JButton btnMeuPerfil = new JButton("Meus Dados do Perfil");
+        btnMeuPerfil.addActionListener(getAbrirPerfilListener(usuario, new CompradorState()));
+
+        JButton btnHistorico = new JButton("Meu Histórico de Compras");
+        btnHistorico.addActionListener(e -> {
+            TelaHistoricoCompras tela = new TelaHistoricoCompras();
+            new HistoricoComprasPresenter(tela, usuario);
             desktopPane.add(tela);
             tela.setVisible(true);
         });
 
         abrirInternalFrame("Menu Comprador",
                 btnAbrirCatalogo,
-                new JButton("Meu Histórico de Compras") // Apenas um botão de placeholder
+                btnMinhasOfertas,
+                btnMeuPerfil,
+                btnHistorico // << Use a nova variável aqui
         );
     }
 
+
     @Override
-    public void exibirMenuAdmin() {
+    public void exibirMenuAdmin(Usuario usuario) {
+        JButton btnAprovar = new JButton("Aprovar Perfis");
+        btnAprovar.addActionListener(e -> {
+            TelaAprovarPerfis tela = new TelaAprovarPerfis();
+            new AprovarPerfisPresenter(tela);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
+        JButton btnMeuPerfil = new JButton("Meus Dados do Perfil");
+        // Para o admin, podemos mostrar o perfil de vendedor como padrão, ou criar uma tela específica.
+        // Por ora, ele verá o perfil de vendedor se tiver um.
+        btnMeuPerfil.addActionListener(getAbrirPerfilListener(usuario, new VendedorState()));
+
         abrirInternalFrame("Menu Administrador",
-                new JButton("Aprovar Perfis"),
+                btnAprovar,
+                btnMeuPerfil, // <<< BOTÃO ADICIONADO AQUI
                 new JButton("Visualizar Logs")
         );
     }

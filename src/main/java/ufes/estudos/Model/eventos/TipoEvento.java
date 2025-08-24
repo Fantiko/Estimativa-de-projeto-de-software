@@ -1,0 +1,11 @@
+package ufes.estudos.Model.eventos;
+
+public enum TipoEvento {
+    PUBLICADO,
+    OFERTA_ENVIADA,
+    OFERTA_ACEITA,
+    AVALIACAO_REGISTRADA,
+    PUBLICADO_REPASSE,
+    ENCAMINHADO_REPARO,
+    ENCAMINHADO_RECICLAGEM
+}

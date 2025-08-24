@@ -7,7 +7,7 @@ import java.util.List;
 
 public class PerfilVendedor extends Usuario{
     private NivelReputacao nivelReputacao;
-    private int totalEstrelas;
+    private double totalEstrelas;
     private int vendasConcluidas;
     private int denunciasRecebidas;
 
@@ -39,11 +39,11 @@ public class PerfilVendedor extends Usuario{
         this.nivelReputacao = nivelReputacao;
     }
 
-    public int getTotalEstrelas() {
+    public double getTotalEstrelas() {
         return totalEstrelas;
     }
 
-    public void setTotalEstrelas(int totalEstrelas) {
+    public void setTotalEstrelas(double totalEstrelas) {
         this.totalEstrelas = totalEstrelas;
     }
 

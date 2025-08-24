@@ -7,8 +7,9 @@ public interface IMainView {
     void setTitulo(String titulo);
     void exibirMenuVendedor(Usuario usuario); // MÉTODO MODIFICADO
     void exibirMenuComprador(Usuario usuario);
-    void exibirMenuAdmin();
+    void exibirMenuAdmin(Usuario usuario);
     void setLogoutListener(ActionListener listener);
     void configurarBotaoTrocaPerfil(String texto, ActionListener listener, boolean visivel);
     void fechar();
+    void setNomeUsuarioLogado(String nomeUsuario);
 }

@@ -4,11 +4,15 @@ import ufes.estudos.Model.State.AdminState;
 import ufes.estudos.Model.State.CompradorState;
 import ufes.estudos.Model.State.IMainState;
 import ufes.estudos.Model.State.VendedorState;
+import ufes.estudos.Model.Usuario.PerfilComprador;
+import ufes.estudos.Model.Usuario.PerfilVendedor;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.ILoginView;
 import ufes.estudos.Views.MainView;
 import ufes.estudos.Views.TelaCadastroEtapa1;
 import ufes.estudos.Views.TelaEscolherPerfil;
+import ufes.estudos.repository.PerfilRepository;
+import ufes.estudos.repository.UsuarioRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +34,8 @@ public class LoginPresenter {
         // Usuário Administrador
         if (username.equals("admin") && senha.equals("123")) {
             Usuario usuarioLogado = new Usuario("admin", "123", "N/A", "admin@sistema.com", "Administrador do Sistema");
+            usuarioLogado.setAdmin(true);
+            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
             abrirTelaPrincipal(usuarioLogado, new AdminState());
 
             // MODIFICADO: Usuário 'user' agora é Vendedor E Comprador
@@ -37,6 +43,7 @@ public class LoginPresenter {
             Usuario usuarioLogado = new Usuario("user", "123", "27999990001", "user@gmail.com", "Usuário Padrão");
             usuarioLogado.setVendedor(true);
             usuarioLogado.setComprador(true);
+            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
             abrirTelaEscolhaPerfil(usuarioLogado); // Como ele tem os 2 perfis, precisa escolher
 
             // NOVO: Usuário 'vendedor' é APENAS vendedor
@@ -44,13 +51,28 @@ public class LoginPresenter {
             Usuario usuarioLogado = new Usuario("vendedor", "123", "27999990002", "vendedor@gmail.com", "Vendedor Exclusivo");
             usuarioLogado.setVendedor(true);
             usuarioLogado.setComprador(false);
-            abrirTelaPrincipal(usuarioLogado, new VendedorState()); // Vai direto para o painel de vendedor
+            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
+
+            PerfilRepository perfilRepository = PerfilRepository.getInstance();
+            if (perfilRepository.getVendedor(usuarioLogado.getNome()) == null) {
+                perfilRepository.addVendedor(new PerfilVendedor(usuarioLogado));
+            }
+
+            abrirTelaPrincipal(usuarioLogado, new VendedorState());
+             // Vai direto para o painel de vendedor
 
             // NOVO: Usuário 'comprador' é APENAS comprador
         } else if (username.equals("comprador") && senha.equals("123")) {
             Usuario usuarioLogado = new Usuario("comprador", "123", "27999990003", "comprador@gmail.com", "Comprador Exclusivo");
             usuarioLogado.setVendedor(false);
             usuarioLogado.setComprador(true);
+            UsuarioRepository.getInstance().addUsuario(usuarioLogado);
+            // --- LÓGICA DE 'GET-OR-CREATE' ---
+            PerfilRepository perfilRepository = PerfilRepository.getInstance();
+            if (perfilRepository.getComprador(usuarioLogado.getNome()) == null) {
+                perfilRepository.addComprador(new PerfilComprador(usuarioLogado));
+            }
+            // <<< ADICIONE
             abrirTelaPrincipal(usuarioLogado, new CompradorState()); // Vai direto para o painel de comprador
 
         } else {

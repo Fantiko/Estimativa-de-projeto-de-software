@@ -3,9 +3,12 @@ package ufes.estudos.Presenter;
 import ufes.estudos.Model.State.CompradorState;
 import ufes.estudos.Model.State.IMainState;
 import ufes.estudos.Model.State.VendedorState;
+import ufes.estudos.Model.Usuario.PerfilComprador;
+import ufes.estudos.Model.Usuario.PerfilVendedor;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.IEscolherPerfilView;
 import ufes.estudos.Views.MainView;
+import ufes.estudos.repository.PerfilRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,14 +31,32 @@ public class EscolherPerfilPresenter {
                 view.mostrarMensagem("Selecione um perfil para continuar!");
                 return;
             }
+            // Dentro do método inicializar() do EscolherPerfilPresenter
+// ...
             IMainState state;
+            PerfilRepository perfilRepository = PerfilRepository.getInstance(); // Pega a instância
+
             if (view.isVendedorSelecionado()) {
                 usuario.setVendedor(true);
                 state = new VendedorState();
+
+                // --- LÓGICA DE 'GET-OR-CREATE' ---
+                if (perfilRepository.getVendedor(usuario.getNome()) == null) {
+                    perfilRepository.addVendedor(new PerfilVendedor(usuario));
+                }
+                // --- FIM DA LÓGICA ---
+
             } else {
                 usuario.setComprador(true);
                 state = new CompradorState();
+
+                // --- LÓGICA DE 'GET-OR-CREATE' ---
+                if (perfilRepository.getComprador(usuario.getNome()) == null) {
+                    perfilRepository.addComprador(new PerfilComprador(usuario));
+                }
+                // --- FIM DA LÓGICA ---
             }
+// ...
             view.fechar();
 
 

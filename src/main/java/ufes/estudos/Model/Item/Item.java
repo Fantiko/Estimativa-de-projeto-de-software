@@ -11,11 +11,14 @@ public class Item {
     private final String estadoConservacao;
     private final double massaEstimada;
     private final double precoBase;
-    private final String nomeVendedor; // CAMPO ADICIONADO
+    private final String nomeVendedor;
+    private final double gwpBase;       // CAMPO ADICIONADO
+    private final double gwpAvoided;
+    private int ciclo;
 
     public Item(String identificadorCircular, String tipoPeca, String subcategoria, String tamanho,
                 String corPredominante, Material material, Defeito defeito, String estadoConservacao,
-                double massaEstimada, double precoBase, String nomeVendedor) { // PARÂMETRO ADICIONADO
+                double massaEstimada, double precoBase, String nomeVendedor, double gwpBase, double gwpAvoided) { // PARÂMETRO ADICIONADO
         this.identificadorCircular = identificadorCircular;
         this.tipoPeca = tipoPeca;
         this.subcategoria = subcategoria;
@@ -27,6 +30,9 @@ public class Item {
         this.massaEstimada = massaEstimada;
         this.precoBase = precoBase;
         this.nomeVendedor = nomeVendedor; // ATRIBUIÇÃO ADICIONADA
+        this.gwpBase = gwpBase;           // ATRIBUIÇÃO ADICIONADA
+        this.gwpAvoided = gwpAvoided;
+        this.ciclo = 1;
     }
 
     // Getters para todos os campos
@@ -40,5 +46,9 @@ public class Item {
     public String getEstadoConservacao() { return estadoConservacao; }
     public double getMassaEstimada() { return massaEstimada; }
     public double getPrecoBase() { return precoBase; }
-    public String getNomeVendedor() { return nomeVendedor; } // GETTER ADICIONADO
+    public String getNomeVendedor() { return nomeVendedor; }
+    public double getGwpBase() { return gwpBase; }         // GETTER ADICIONADO
+    public double getGwpAvoided() { return gwpAvoided; }   // GETTER ADICIONADO
+    public int getCiclo() { return ciclo; }
+    public void incrementarCiclo() { this.ciclo++; }
 }
