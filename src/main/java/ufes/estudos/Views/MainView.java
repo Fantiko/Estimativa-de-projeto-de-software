@@ -1,9 +1,7 @@
 package ufes.estudos.Views;
 
 import ufes.estudos.Model.Usuario.Usuario;
-import ufes.estudos.Presenter.AdicionarAnuncioPresenter;
-import ufes.estudos.Presenter.CatalogoPresenter;
-import ufes.estudos.Presenter.GerenciarAnunciosPresenter;
+import ufes.estudos.Presenter.*;
 import ufes.estudos.Presenter.GerenciarAnunciosPresenter;
 import ufes.estudos.Views.TelaGerenciarAnuncios; // Importar a classe concreta
 
@@ -17,6 +15,7 @@ public class MainView extends JFrame implements IMainView {
     private final JButton btnLogout;
     private final JButton btnTrocarPerfil;
     private final JDesktopPane desktopPane;
+    private final JLabel lblUsuarioLogado;
 
     // Variáveis para controlar a posição em cascata das janelas
     private int cascadeX = 20;
@@ -36,13 +35,25 @@ public class MainView extends JFrame implements IMainView {
         desktopPane = new JDesktopPane();
         add(desktopPane, BorderLayout.CENTER);
 
-        // Rodapé com botão de logout
+        // --- RODAPÉ MODIFICADO ---
+        JPanel painelRodape = new JPanel(new BorderLayout()); // Layout modificado
+        painelRodape.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+        // Nome do usuário à esquerda
+        lblUsuarioLogado = new JLabel();
+        lblUsuarioLogado.setFont(new Font("Roboto", Font.ITALIC, 12));
+        painelRodape.add(lblUsuarioLogado, BorderLayout.WEST);
+
+        // Botões à direita
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btnLogout = new JButton("Logout");
-        btnTrocarPerfil = new JButton(); // <<< ADICIONE ESTA LINHA
-        JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        painelRodape.add(btnTrocarPerfil); // <<< ADICIONE ESTA LINHA
-        painelRodape.add(btnLogout);
+        btnTrocarPerfil = new JButton();
+        painelBotoes.add(btnTrocarPerfil);
+        painelBotoes.add(btnLogout);
+        painelRodape.add(painelBotoes, BorderLayout.EAST);
+
         add(painelRodape, BorderLayout.SOUTH);
+        // --- FIM DA MODIFICAÇÃO DO RODAPÉ ---
 
         // Configurações da janela principal
         setSize(800, 600);
@@ -53,6 +64,11 @@ public class MainView extends JFrame implements IMainView {
     @Override
     public void setTitulo(String titulo) {
         lblTitulo.setText(titulo);
+    }
+
+    @Override
+    public void setNomeUsuarioLogado(String nomeUsuario) {
+        lblUsuarioLogado.setText("Usuário: " + nomeUsuario);
     }
 
     @Override
@@ -97,8 +113,16 @@ public class MainView extends JFrame implements IMainView {
 
     @Override
     public void exibirMenuAdmin() {
+        JButton btnAprovar = new JButton("Aprovar Perfis");
+        btnAprovar.addActionListener(e -> {
+            TelaAprovarPerfis tela = new TelaAprovarPerfis();
+            new AprovarPerfisPresenter(tela);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
         abrirInternalFrame("Menu Administrador",
-                new JButton("Aprovar Perfis"),
+                btnAprovar,
                 new JButton("Visualizar Logs")
         );
     }
