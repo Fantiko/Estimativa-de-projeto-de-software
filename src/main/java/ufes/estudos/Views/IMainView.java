@@ -11,4 +11,5 @@ public interface IMainView {
     void setLogoutListener(ActionListener listener);
     void configurarBotaoTrocaPerfil(String texto, ActionListener listener, boolean visivel);
     void fechar();
+    void setNomeUsuarioLogado(String nomeUsuario);
 }
