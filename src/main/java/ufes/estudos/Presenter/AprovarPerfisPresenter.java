@@ -4,9 +4,7 @@ import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.IAprovarPerfisView;
 import ufes.estudos.observer.Observer;
-import ufes.estudos.repository.RepositoriesSQLite.PerfilCompradorSQLiteRepository;
-import ufes.estudos.repository.RepositoriesSQLite.PerfilVendedorSQLiteRepository;
-import ufes.estudos.repository.RepositoriesSQLite.UsuarioSQLiteRepository;
+import ufes.estudos.repository.RepositoriesSQLite.*;
 import ufes.estudos.repository.SolicitacaoRepository;
 import ufes.estudos.service.PerfilCompradorService;
 import ufes.estudos.service.PerfilVendedorService;
@@ -28,8 +26,8 @@ public class AprovarPerfisPresenter implements Observer {
 
         // Inicializa os serviços com as implementações do SQLite
         this.usuarioService = new UsuarioService(new UsuarioSQLiteRepository(new SQLiteConnectionManager()));
-        this.perfilVendedorService = new PerfilVendedorService(new PerfilVendedorSQLiteRepository(new SQLiteConnectionManager()));
-        this.perfilCompradorService = new PerfilCompradorService(new PerfilCompradorSQLiteRepository());
+        this.perfilVendedorService = new PerfilVendedorService(new PerfilVendedorSQLiteRepository(new SQLiteConnectionManager()), new InsigniaVendedorSQLiteRepository());
+        this.perfilCompradorService = new PerfilCompradorService(new PerfilCompradorSQLiteRepository(), new InsigniaCompradorSQLiteRepository());
 
 
         this.solicitacaoRepository.addObserver(this);

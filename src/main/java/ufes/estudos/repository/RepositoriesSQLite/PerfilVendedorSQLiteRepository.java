@@ -21,7 +21,7 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
     @Override
     public Optional<PerfilVendedor> adicionar(PerfilVendedor perfil) {
         String sql = "INSERT INTO perfilVendedor (usuarioId) VALUES (?)";
-        try (Connection con = connectionManager.getConnection();
+        try (Connection con = SQLiteConnectionManager.getConnection();
              var stmt = con.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setInt(1, perfil.getId());
@@ -48,12 +48,25 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
 
     @Override
     public void atualizar(PerfilVendedor perfil) {
+        String sql = "UPDATE perfilVendedor SET nivelReputacao = ?, totalEstrelas = ?, vendasConcluidas = ?, denunciasRecebidas = ?, beneficioClimaticoContribuido = ? WHERE id = ?";
+        try (Connection con = SQLiteConnectionManager.getConnection();
+             var stmt = con.prepareStatement(sql)) {
 
-    }
+            stmt.setString(1, perfil.getNivelReputacao().name());
+            stmt.setDouble(2, perfil.getTotalEstrelas());
+            stmt.setInt(3, perfil.getVendasConcluidas());
+            stmt.setInt(4, perfil.getDenunciasRecebidas());
+            stmt.setDouble(5, perfil.getBeneficioClimaticoContribuido());
+            stmt.setInt(6, perfil.getId());
 
-    @Override
-    public Optional<PerfilVendedor> buscarPorId(int id) {
-        return Optional.empty();
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new RuntimeException("Atualização falhou, nenhuma linha afetada.");
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar perfil vendedor: " + e.getMessage());
+        }
+
     }
 
     @Override
@@ -81,17 +94,6 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
         }
 
         return Optional.empty();
-    }
-
-    @Override
-    public void adicionarInsignia(int perfilVendedorId, int insigniaId) {
-
-
-    }
-
-    @Override
-    public void removerInsignia(int perfilVendedorId, int insigniaId) {
-
     }
 
     @Override

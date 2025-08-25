@@ -14,8 +14,4 @@ public interface PerfilCompradorRepository {
     Optional<PerfilComprador> buscarPorId(int id);
     Optional<PerfilComprador> buscarPorUsuarioId(Usuario usuario);
 
-    void adicionarInsignia(int perfilCompradorId, int insigniaId);
-    void removerInsignia(int perfilCompradorId, int insigniaId);
-    List<Insignia> buscarInsignias(int perfilCompradorId);
-
 }
