@@ -21,8 +21,9 @@ public class OfertaRepository extends Subject {
     }
 
     public void addOferta(Oferta oferta) {
-        // Lógica para permitir apenas uma oferta por comprador por item
-        ofertas.removeIf(o -> o.getIdcItem().equals(oferta.getIdcItem()) && o.getNomeComprador().equals(oferta.getNomeComprador()));
+        // --- LÓGICA CORRIGIDA AQUI ---
+        // Lógica para permitir apenas uma oferta por comprador por item, agora usando IDs
+        ofertas.removeIf(o -> o.getIdcItem().equals(oferta.getIdcItem()) && o.getIdComprador() == oferta.getIdComprador());
         this.ofertas.add(oferta);
         notifyObservers("ADD_OFERTA", oferta);
     }
@@ -30,10 +31,10 @@ public class OfertaRepository extends Subject {
     public List<Oferta> getOfertas() {
         return new ArrayList<>(ofertas);
     }
-    // Dentro da classe OfertaRepository
 
     public void removeOferta(Oferta oferta) {
-        ofertas.removeIf(o -> o.getIdcItem().equals(oferta.getIdcItem()) && o.getNomeComprador().equals(oferta.getNomeComprador()));
+        // --- LÓGICA CORRIGIDA AQUI ---
+        ofertas.removeIf(o -> o.getIdcItem().equals(oferta.getIdcItem()) && o.getIdComprador() == oferta.getIdComprador());
         notifyObservers("REMOVE_OFERTA", oferta);
     }
 

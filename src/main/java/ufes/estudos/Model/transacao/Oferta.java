@@ -4,22 +4,22 @@ import java.time.LocalDateTime;
 
 public class Oferta {
     private final String idcItem;
-    private final String nomeComprador;
-    private final String nomeVendedor;
+    private final int idComprador;
+    private final int idVendedor;
     private final double valorOfertado;
     private final LocalDateTime dataOferta;
 
-    public Oferta(String idcItem, String nomeComprador, String nomeVendedor, double valorOfertado) {
+    public Oferta(String idcItem, int idComprador, int idVendedor, double valorOfertado) {
         this.idcItem = idcItem;
-        this.nomeComprador = nomeComprador;
-        this.nomeVendedor = nomeVendedor;
+        this.idComprador = idComprador;
+        this.idVendedor = idVendedor;
         this.valorOfertado = valorOfertado;
         this.dataOferta = LocalDateTime.now();
     }
 
     public String getIdcItem() { return idcItem; }
-    public String getNomeComprador() { return nomeComprador; }
-    public String getNomeVendedor() { return nomeVendedor; }
+    public int getIdComprador() { return idComprador; }
+    public int getIdVendedor() { return idVendedor; }
     public double getValorOfertado() { return valorOfertado; }
     public LocalDateTime getDataOferta() { return dataOferta; }
 }

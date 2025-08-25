@@ -91,8 +91,8 @@ public class GerenciarAnunciosPresenter implements Observer {
 
 
     private void carregarAnuncios() {
-        // MÉTODO MODIFICADO PARA USAR O NOVO FILTRO
-        List<Item> anuncios = anuncioRepository.getAnunciosByVendedor(this.usuario.getNome());
+        // A chamada agora passa o ID do usuário, e não mais o nome
+        List<Item> anuncios = anuncioRepository.getAnunciosByVendedor(this.usuario.getId());
         view.atualizarTabela(anuncios);
     }
 
