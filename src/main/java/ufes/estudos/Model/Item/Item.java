@@ -2,23 +2,23 @@ package ufes.estudos.Model.Item;
 
 public class Item {
     private final String identificadorCircular;
-    private final String tipoPeca;
-    private final String subcategoria;
-    private final String tamanho;
-    private final String corPredominante;
-    private final Material material;
-    private final Defeito defeito;
-    private final String estadoConservacao;
-    private final double massaEstimada;
-    private final double precoBase;
-    private final String nomeVendedor;
-    private final double gwpBase;       // CAMPO ADICIONADO
-    private final double gwpAvoided;
+    private String tipoPeca;
+    private String subcategoria;
+    private String tamanho;
+    private String corPredominante;
+    private Material material;
+    private Defeito defeito;
+    private String estadoConservacao;
+    private double massaEstimada;
+    private double precoBase;
+    private int idVendedor; //mudou
+    private double gwpBase;       // CAMPO ADICIONADO
+    private double gwpAvoided;
     private int ciclo;
 
     public Item(String identificadorCircular, String tipoPeca, String subcategoria, String tamanho,
                 String corPredominante, Material material, Defeito defeito, String estadoConservacao,
-                double massaEstimada, double precoBase, String nomeVendedor, double gwpBase, double gwpAvoided) { // PARÂMETRO ADICIONADO
+                double massaEstimada, double precoBase, int idVendedor, double gwpBase, double gwpAvoided) { // PARÂMETRO ADICIONADO
         this.identificadorCircular = identificadorCircular;
         this.tipoPeca = tipoPeca;
         this.subcategoria = subcategoria;
@@ -29,10 +29,67 @@ public class Item {
         this.estadoConservacao = estadoConservacao;
         this.massaEstimada = massaEstimada;
         this.precoBase = precoBase;
-        this.nomeVendedor = nomeVendedor; // ATRIBUIÇÃO ADICIONADA
+        this.idVendedor = idVendedor; // ATRIBUIÇÃO ADICIONADA
         this.gwpBase = gwpBase;           // ATRIBUIÇÃO ADICIONADA
         this.gwpAvoided = gwpAvoided;
         this.ciclo = 1;
+    }
+
+    public Item(String identificadorCircular){
+
+        this.identificadorCircular = identificadorCircular;
+    }
+
+    public void setTipoPeca(String tipoPeca) {
+        this.tipoPeca = tipoPeca;
+    }
+
+    public void setSubcategoria(String subcategoria) {
+        this.subcategoria = subcategoria;
+    }
+
+    public void setTamanho(String tamanho) {
+        this.tamanho = tamanho;
+    }
+
+    public void setCorPredominante(String corPredominante) {
+        this.corPredominante = corPredominante;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
+    public void setDefeito(Defeito defeito) {
+        this.defeito = defeito;
+    }
+
+    public void setEstadoConservacao(String estadoConservacao) {
+        this.estadoConservacao = estadoConservacao;
+    }
+
+    public void setMassaEstimada(double massaEstimada) {
+        this.massaEstimada = massaEstimada;
+    }
+
+    public void setPrecoBase(double precoBase) {
+        this.precoBase = precoBase;
+    }
+
+    public void setIdVendedor(int idVendedor) {
+        this.idVendedor = idVendedor;
+    }
+
+    public void setGwpBase(double gwpBase) {
+        this.gwpBase = gwpBase;
+    }
+
+    public void setGwpAvoided(double gwpAvoided) {
+        this.gwpAvoided = gwpAvoided;
+    }
+
+    public void setCiclo(int ciclo) {
+        this.ciclo = ciclo;
     }
 
     // Getters para todos os campos
@@ -46,7 +103,7 @@ public class Item {
     public String getEstadoConservacao() { return estadoConservacao; }
     public double getMassaEstimada() { return massaEstimada; }
     public double getPrecoBase() { return precoBase; }
-    public String getNomeVendedor() { return nomeVendedor; }
+    public int getIdVendedor() { return idVendedor; }
     public double getGwpBase() { return gwpBase; }         // GETTER ADICIONADO
     public double getGwpAvoided() { return gwpAvoided; }   // GETTER ADICIONADO
     public int getCiclo() { return ciclo; }
