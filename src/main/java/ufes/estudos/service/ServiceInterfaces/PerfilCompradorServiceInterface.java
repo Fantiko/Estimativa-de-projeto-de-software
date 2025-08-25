@@ -20,7 +20,7 @@ public interface PerfilCompradorServiceInterface {
 
     void criarPerfilComprador(Usuario usuario);
 
-    PerfilComprador buscarPerfilCompradorPorUsuario(String usuario);
-
-
+    // --- CORREÇÃO AQUI ---
+    // O parâmetro foi alterado de String para Usuario
+    PerfilComprador buscarPerfilCompradorPorUsuario(Usuario usuario);
 }
