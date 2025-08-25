@@ -1,26 +1,27 @@
 package ufes.estudos.service;
 
+import ufes.estudos.Model.Usuario.Insignia;
 import ufes.estudos.Model.Usuario.PerfilComprador;
 import ufes.estudos.Model.Usuario.Usuario;
+import ufes.estudos.repository.RepositoriesIntefaces.InsigniasRepository;
 import ufes.estudos.repository.RepositoriesIntefaces.PerfilCompradorRepository;
 import ufes.estudos.service.ServiceInterfaces.PerfilCompradorServiceInterface;
 
+import java.util.List;
 import java.util.Optional;
 
 public class PerfilCompradorService implements PerfilCompradorServiceInterface {
 
     private final PerfilCompradorRepository perfilCompradorRepository;
+    private final InsigniasRepository insigniasRepository;
 
-    public PerfilCompradorService(PerfilCompradorRepository perfilCompradorRepository) {
+    public PerfilCompradorService(PerfilCompradorRepository perfilCompradorRepository, InsigniasRepository insigniasRepository) {
         this.perfilCompradorRepository = perfilCompradorRepository;
+        this.insigniasRepository = insigniasRepository;
     }
-
-    // ... (outros métodos de Insignia, se houver)
 
     @Override
     public void criarPerfilComprador(Usuario usuario) {
-        // --- CORREÇÃO AQUI ---
-        // Agora, o PerfilComprador é criado a partir do usuário existente, herdando seu ID.
         PerfilComprador perfilComprador = new PerfilComprador(usuario);
         perfilCompradorRepository.adicionar(perfilComprador);
     }
@@ -34,25 +35,28 @@ public class PerfilCompradorService implements PerfilCompradorServiceInterface {
         throw new RuntimeException("Perfil de comprador não encontrado para o usuário: " + usuario.getNome());
     }
 
-    // Deixei os métodos de insignia vazios como estavam, para implementarmos no futuro se necessário
     @Override
-    public void adicionarInsignia(String nome, String descricao) {}
+    public void adicionarInsignia(int perfilId, int insigniaId) {
+        insigniasRepository.adicionarInsignia(perfilId, insigniaId);
+    }
 
     @Override
-    public void removerInsignia(String nome) {}
+    public void removerInsignia(int perfilId, int insigniaId) {
+        insigniasRepository.removerInsignia(perfilId, insigniaId);
+    }
 
     @Override
-    public void atualizarInsignia(String nome, String descricao) {}
+    public int contarInsignias() {
+        return insigniasRepository.contarInsignias();
+    }
 
     @Override
-    public boolean verificarInsignia(String nome) { return false; }
+    public String buscarDescricao(int idInsignea) {
+        return insigniasRepository.buscarDescricao(idInsignea);
+    }
 
     @Override
-    public int contarInsignias() { return 0; }
-
-    @Override
-    public String buscarDescricao(String nome) { return null; }
-
-    @Override
-    public String listarTodasInsignias() { return null; }
+    public List<Insignia> listarTodasInsignias() {
+        return insigniasRepository.listarTodasInsignias();
+    }
 }

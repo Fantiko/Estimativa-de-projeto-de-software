@@ -16,8 +16,6 @@ public class ReputacaoService {
         }
         return instance;
     }
-
-    // --- MÉTODOS DE EVENTOS ---
     public void processarCadastroItemCompleto(PerfilVendedor vendedor) {
         System.out.println("Processando +0.05 estrela para vendedor: " + vendedor.getNome());
         adicionarEstrelasVendedor(vendedor, 0.05);

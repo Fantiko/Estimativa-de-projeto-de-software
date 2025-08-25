@@ -8,7 +8,5 @@ public interface UsuarioServiceInterface {
     Optional<Usuario> registrar(Usuario usuario);
     void atualizar(Usuario usuario);
     Optional<Usuario> buscarPorUsuario(String username);
-
-    // --- MÉTODO ADICIONADO AQUI ---
     long totalUsuarios();
 }

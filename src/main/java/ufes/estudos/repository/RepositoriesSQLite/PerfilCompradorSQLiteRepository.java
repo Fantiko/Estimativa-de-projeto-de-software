@@ -5,12 +5,13 @@ import ufes.estudos.Model.Usuario.Insignia;
 import ufes.estudos.Model.Usuario.NivelReputacao;
 import ufes.estudos.Model.Usuario.PerfilComprador;
 import ufes.estudos.Model.Usuario.Usuario;
+import ufes.estudos.repository.RepositoriesIntefaces.InsigniasRepository;
 import ufes.estudos.repository.RepositoriesIntefaces.PerfilCompradorRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public class PerfilCompradorSQLiteRepository implements PerfilCompradorRepository {
+public class PerfilCompradorSQLiteRepository implements PerfilCompradorRepository{
     @Override
     public void adicionar(PerfilComprador perfil) {
         String sql = "INSERT INTO perfilComprador (usuarioId) VALUES (?)";
@@ -38,11 +39,12 @@ public class PerfilCompradorSQLiteRepository implements PerfilCompradorRepositor
 
     @Override
     public void atualizar(PerfilComprador perfil) {
-
+        //TODO
     }
 
     @Override
     public Optional<PerfilComprador> buscarPorId(int id) {
+        //TODO
         return Optional.empty();
     }
 
@@ -78,17 +80,6 @@ public class PerfilCompradorSQLiteRepository implements PerfilCompradorRepositor
         return Optional.empty();
     }
 
-    @Override
-    public void adicionarInsignia(int perfilCompradorId, int insigniaId) {
-
-    }
-
-    @Override
-    public void removerInsignia(int perfilCompradorId, int insigniaId) {
-
-    }
-
-    @Override
     public List<Insignia> buscarInsignias(int perfilCompradorId) {
         String sql = "SELECT \n" +
                 "    i.id AS insigniaId,\n" +
@@ -103,27 +94,28 @@ public class PerfilCompradorSQLiteRepository implements PerfilCompradorRepositor
                 "    insignias AS i ON pci.insigniaId = i.id\n" +
                 "WHERE \n" +
                 "    pc.id = ?;";
-    try (var con = SQLiteConnectionManager.getConnection()){
-        var stmt = con.prepareStatement(sql);
-        stmt.setInt(1, perfilCompradorId);
-        var rs = stmt.executeQuery();
+        try (var con = SQLiteConnectionManager.getConnection()){
+            var stmt = con.prepareStatement(sql);
+            stmt.setInt(1, perfilCompradorId);
+            var rs = stmt.executeQuery();
 
-        List<Insignia> insignias = new java.util.ArrayList<>();
-        while (rs.next()) {
-            Insignia insignia = new Insignia();
-            insignia.setId(rs.getInt("insigniaId"));
-            insignia.setNome(rs.getString("nomeInsignia"));
-            insignia.setDescricao(rs.getString("descricao"));
-            insignia.setDataConquista(rs.getDate("dataConquista").toLocalDate());
+            List<Insignia> insignias = new java.util.ArrayList<>();
+            while (rs.next()) {
+                Insignia insignia = new Insignia();
+                insignia.setId(rs.getInt("insigniaId"));
+                insignia.setNome(rs.getString("nomeInsignia"));
+                insignia.setDescricao(rs.getString("descricao"));
+                insignia.setDataConquista(rs.getDate("dataConquista").toLocalDate());
 
-            insignias.add(insignia);
+                insignias.add(insignia);
+            }
+            return insignias;
+
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar insignias: " + e.getMessage());
         }
-        return insignias;
-
-    } catch (Exception e) {
-        System.err.println("Erro ao buscar insignias: " + e.getMessage());
-    }
 
         return null;
     }
+
 }

@@ -21,7 +21,7 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
     @Override
     public Optional<PerfilVendedor> adicionar(PerfilVendedor perfil) {
         String sql = "INSERT INTO perfilVendedor (usuarioId) VALUES (?)";
-        try (Connection con = connectionManager.getConnection();
+        try (Connection con = SQLiteConnectionManager.getConnection();
              var stmt = con.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setInt(1, perfil.getId());
@@ -48,11 +48,12 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
 
     @Override
     public void atualizar(PerfilVendedor perfil) {
-
+        //TODO
     }
 
     @Override
     public Optional<PerfilVendedor> buscarPorId(int id) {
+        //TODO
         return Optional.empty();
     }
 
@@ -81,17 +82,6 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
         }
 
         return Optional.empty();
-    }
-
-    @Override
-    public void adicionarInsignia(int perfilVendedorId, int insigniaId) {
-
-
-    }
-
-    @Override
-    public void removerInsignia(int perfilVendedorId, int insigniaId) {
-
     }
 
     @Override

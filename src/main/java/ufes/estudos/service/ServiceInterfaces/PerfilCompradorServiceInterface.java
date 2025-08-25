@@ -1,26 +1,24 @@
 package ufes.estudos.service.ServiceInterfaces;
 
+import ufes.estudos.Model.Usuario.Insignia;
 import ufes.estudos.Model.Usuario.PerfilComprador;
 import ufes.estudos.Model.Usuario.Usuario;
 
+import java.util.List;
+
 public interface PerfilCompradorServiceInterface {
-    void adicionarInsignia(String nome, String descricao);
+    void criarPerfilComprador(Usuario usuario);
 
-    void removerInsignia(String nome);
+    PerfilComprador buscarPerfilCompradorPorUsuario(Usuario usuario);
 
-    void atualizarInsignia(String nome, String descricao);
+    void adicionarInsignia(int perfilCompradorId, int insigniaId);
 
-    boolean verificarInsignia(String nome);
+    void removerInsignia(int perfilCompradorId, int insigniaId);
 
     int contarInsignias();
 
-    String buscarDescricao(String nome);
+    String buscarDescricao(int idInsignea);
 
-    String listarTodasInsignias();
 
-    void criarPerfilComprador(Usuario usuario);
-
-    // --- CORREÇÃO AQUI ---
-    // O parâmetro foi alterado de String para Usuario
-    PerfilComprador buscarPerfilCompradorPorUsuario(Usuario usuario);
+    List<Insignia> listarTodasInsignias();
 }
