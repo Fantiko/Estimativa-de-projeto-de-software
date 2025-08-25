@@ -48,12 +48,30 @@ public class InsigniaCompradorSQLiteRepository implements InsigniasRepository {
 
     @Override
     public void adicionarInsignia(int perfilId, int insigniaId) {
-        //todo
+        String sql = "INSERT INTO perfilCompradorInsignias (perfilCompradorId, insigniaId) VALUES (?, ?)";
+        try (var con = SQLiteConnectionManager.getConnection()) {
+            var stmt = con.prepareStatement(sql);
+            stmt.setInt(1, perfilId);
+            stmt.setInt(2, insigniaId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Erro ao adicionar insignia: " + e.getMessage());
+        }
     }
 
     @Override
     public String buscarDescricao(int idInsignea) {
-        //todo
+        String sql = "SELECT descricao FROM insignias WHERE id = ?";
+        try (var con = SQLiteConnectionManager.getConnection()) {
+            var stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idInsignea);
+            var rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("descricao");
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar descrição da insignia: " + e.getMessage());
+        }
         return null;
     }
 
@@ -71,7 +89,15 @@ public class InsigniaCompradorSQLiteRepository implements InsigniasRepository {
 
     @Override
     public void removerInsignia(int perfilId, int insigniaId) {
-
+        String sql = "DELETE FROM perfilCompradorInsignias WHERE perfilCompradorId = ? AND insigniaId = ?";
+        try (var con = SQLiteConnectionManager.getConnection()) {
+            var stmt = con.prepareStatement(sql);
+            stmt.setInt(1, perfilId);
+            stmt.setInt(2, insigniaId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Erro ao remover insignia: " + e.getMessage());
+        }
     }
 
 

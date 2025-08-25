@@ -90,16 +90,98 @@ public class ItemSQLiteRepository implements ItemRepository {
 
     @Override
     public void atualizar(Item item) {
+        String sql = "UPDATE itens SET \n" +
+                "    tipoPeca = ?, \n" +
+                "    subcategoria = ?, \n" +
+                "    tamanho = ?, \n" +
+                "    corPredominante = ?, \n" +
+                "    estadoConservacao = ?, \n" +
+                "    massaEstimada = ?, \n" +
+                "    precoBase = ?, \n" +
+                "    ciclo = ?,\n" +
+                "    gwpBase = ?,\n" +
+                "    gwpAvoided = ?,\n" +
+                "    vendedorId = ?, \n" +
+                "    materialId = ?\n" +
+                "WHERE identificadorCircular = ?;";
 
+        try (var con = SQLiteConnectionManager.getConnection();
+             var stmt = con.prepareStatement(sql)) {
+
+            stmt.setString(1, item.getTipoPeca());
+            stmt.setString(2, item.getSubcategoria());
+            stmt.setString(3, item.getTamanho());
+            stmt.setString(4, item.getCorPredominante());
+            stmt.setString(5, item.getEstadoConservacao());
+            stmt.setDouble(6, item.getMassaEstimada());
+            stmt.setDouble(7, item.getPrecoBase());
+            stmt.setInt(8, item.getCiclo());
+            stmt.setDouble(9, item.getGwpBase());
+            stmt.setDouble(10, item.getGwpAvoided());
+            stmt.setInt(11, item.getIdVendedor());
+            stmt.setInt(12, item.getMaterial().getId());
+            stmt.setString(13, item.getIdentificadorCircular());
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Atualização falhou, nenhuma linha afetada.");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar item: " + e.getMessage());
+        }
     }
 
     @Override
     public void remover(String identificadorCircular) {
+        String sql = "DELETE FROM itens WHERE identificadorCircular = ?";
 
+        try (var con = SQLiteConnectionManager.getConnection();
+             var stmt = con.prepareStatement(sql)) {
+
+            stmt.setString(1, identificadorCircular);
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Remoção falhou, nenhuma linha afetada.");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao remover item: " + e.getMessage());
+        }
     }
 
     @Override
     public Optional<Item> buscarPorId(String identificadorCircular) {
+        String sql = "SELECT * FROM itens WHERE identificadorCircular = ?";
+        try (var con = SQLiteConnectionManager.getConnection();
+             var stmt = con.prepareStatement(sql)) {
+
+            stmt.setString(1, identificadorCircular);
+            var rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Item item = new Item(rs.getString("identificadorCircular"));
+                item.setTipoPeca(rs.getString("tipoPeca"));
+                item.setSubcategoria(rs.getString("subcategoria"));
+                item.setTamanho(rs.getString("tamanho"));
+                item.setCorPredominante(rs.getString("corPredominante"));
+                item.setEstadoConservacao(rs.getString("estadoConservacao"));
+                item.setMassaEstimada(rs.getDouble("massaEstimada"));
+                item.setPrecoBase(rs.getDouble("precoBase"));
+                item.setIdVendedor(rs.getInt("vendedorId"));
+                item.setGwpBase(rs.getDouble("gwpBase"));
+                item.setGwpAvoided(rs.getDouble("gwpAvoided"));
+                item.setCiclo(rs.getInt("ciclo"));
+                item.setDefeito(buscarDefeito(identificadorCircular));
+                item.setMaterial(buscarMaterial(rs.getInt("materialId")));
+
+                return Optional.of(item);
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar item por ID: " + e.getMessage());
+        }
         return Optional.empty();
     }
 
@@ -131,11 +213,34 @@ public class ItemSQLiteRepository implements ItemRepository {
 
     @Override
     public List<Item> buscarTodos() {
+        String sql = "SELECT * FROM itens";
+        try (var con = SQLiteConnectionManager.getConnection();
+             var stmt = con.prepareStatement(sql);
+             var rs = stmt.executeQuery()) {
+
+            return buscarItensDoResultSet(rs);
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar todos os itens: " + e.getMessage());
+        }
         return null;
     }
 
     @Override
     public int contarItensPorVendedor(int vendedorId) {
+        String sql = "SELECT COUNT(*) AS total FROM itens WHERE vendedorId = ?";
+        try (var con = SQLiteConnectionManager.getConnection();
+             var stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, vendedorId);
+            var rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao contar itens por vendedor: " + e.getMessage());
+        }
         return 0;
     }
 
@@ -223,14 +328,6 @@ public class ItemSQLiteRepository implements ItemRepository {
 
         return null;
     }
-
-
-
-
-
-
-
-
 }
 
 

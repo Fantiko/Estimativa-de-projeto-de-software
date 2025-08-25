@@ -48,13 +48,25 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
 
     @Override
     public void atualizar(PerfilVendedor perfil) {
-        //TODO
-    }
+        String sql = "UPDATE perfilVendedor SET nivelReputacao = ?, totalEstrelas = ?, vendasConcluidas = ?, denunciasRecebidas = ?, beneficioClimaticoContribuido = ? WHERE id = ?";
+        try (Connection con = SQLiteConnectionManager.getConnection();
+             var stmt = con.prepareStatement(sql)) {
 
-    @Override
-    public Optional<PerfilVendedor> buscarPorId(int id) {
-        //TODO
-        return Optional.empty();
+            stmt.setString(1, perfil.getNivelReputacao().name());
+            stmt.setDouble(2, perfil.getTotalEstrelas());
+            stmt.setInt(3, perfil.getVendasConcluidas());
+            stmt.setInt(4, perfil.getDenunciasRecebidas());
+            stmt.setDouble(5, perfil.getBeneficioClimaticoContribuido());
+            stmt.setInt(6, perfil.getId());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new RuntimeException("Atualização falhou, nenhuma linha afetada.");
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar perfil vendedor: " + e.getMessage());
+        }
+
     }
 
     @Override
