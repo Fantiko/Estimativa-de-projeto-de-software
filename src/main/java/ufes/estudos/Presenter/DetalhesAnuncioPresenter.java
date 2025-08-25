@@ -45,7 +45,7 @@ public class DetalhesAnuncioPresenter implements Observer {
                     dadosEditadosDaView.getEstadoConservacao(),
                     dadosEditadosDaView.getMassaEstimada(),
                     dadosEditadosDaView.getPrecoBase(),
-                    this.itemOriginal.getNomeVendedor(),    // Passa o nome do vendedor original
+                    this.itemOriginal.getIdVendedor(),    // Passa o nome do vendedor original
                     this.itemOriginal.getGwpBase(),         // <<< Passa o gwpBase original
                     this.itemOriginal.getGwpAvoided()       // <<< Passa o gwpAvoided original
             );

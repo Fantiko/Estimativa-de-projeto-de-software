@@ -68,7 +68,7 @@ public class AnuncioRepository extends Subject {
     public List<Item> getAnunciosByVendedor(String nomeVendedor) {
         List<Item> anunciosDoVendedor = new ArrayList<>();
         for (Item item : this.anuncios) {
-            if (item.getNomeVendedor() != null && item.getNomeVendedor().equals(nomeVendedor)) {
+            if (item.getIdVendedor() != null && item.getIdVendedor().equals(nomeVendedor)) {
                 anunciosDoVendedor.add(item);
             }
         }
