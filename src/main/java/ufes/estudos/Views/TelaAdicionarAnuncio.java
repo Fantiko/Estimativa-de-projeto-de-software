@@ -67,7 +67,7 @@ public class TelaAdicionarAnuncio extends JInternalFrame implements IAdicionarAn
         gbc.gridx = 0; gbc.gridy = 5;
         painelCampos.add(new JLabel("Composição Principal:"), gbc);
         gbc.gridx = 1; gbc.gridy = 5;
-        cbComposicao = new JComboBox<>(new String[]{"", "Algodão", "Poliéster", "Couro", "Metal", "Plástico de base fóssil", "Outros"});
+        cbComposicao = new JComboBox<>();
         painelCampos.add(cbComposicao, gbc);
 
         gbc.gridx = 0; gbc.gridy = 6;
@@ -129,4 +129,9 @@ public class TelaAdicionarAnuncio extends JInternalFrame implements IAdicionarAn
     @Override public void setCancelarListener(ActionListener listener) { btnCancelar.addActionListener(listener); }
     @Override public void exibirMensagem(String mensagem) { JOptionPane.showMessageDialog(this, mensagem, "Aviso", JOptionPane.INFORMATION_MESSAGE); }
     @Override public void fechar() { dispose(); }
+    // Adicione este método na classe TelaAdicionarAnuncio
+    @Override
+    public void setComposicaoOptions(String[] materiais) {
+        cbComposicao.setModel(new DefaultComboBoxModel<>(materiais));
+    }
 }

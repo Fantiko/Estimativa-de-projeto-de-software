@@ -48,7 +48,7 @@ public class NegociacaoPresenter {
                 return;
             }
 
-            Oferta novaOferta = new Oferta(item.getIdentificadorCircular(), comprador.getNome(), item.getIdVendedor(), valorOfertado);
+            Oferta novaOferta = new Oferta(item.getIdentificadorCircular(), comprador.getId(), item.getIdVendedor(), valorOfertado);
             OfertaRepository.getInstance().addOferta(novaOferta);
 
             // --- CÓDIGO DA LINHA DO TEMPO ADICIONADO AQUI ---

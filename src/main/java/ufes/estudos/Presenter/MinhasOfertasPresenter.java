@@ -34,18 +34,13 @@ public class MinhasOfertasPresenter implements Observer {
 
     private void carregarMinhasOfertas() {
         List<Oferta> minhasOfertas = ofertaRepository.getOfertas().stream()
-                .filter(o -> o.getNomeComprador().equals(comprador.getNome()))
+                .filter(o -> o.getIdComprador() == comprador.getId())
                 .collect(Collectors.toList());
         view.atualizarTabela(minhasOfertas);
     }
 
     private void cancelarOferta() {
-        int selectedRow = view.getTabelaOfertas().getSelectedRow();
-        if (selectedRow < 0) {
-            view.exibirMensagem("Selecione uma oferta para cancelar.");
-            return;
-        }
-        Oferta ofertaSelecionada = getOfertaSelecionada(selectedRow);
+        Oferta ofertaSelecionada = getOfertaSelecionada();
         if (ofertaSelecionada != null) {
             ofertaRepository.removeOferta(ofertaSelecionada);
             view.exibirMensagem("Oferta cancelada com sucesso.");
@@ -53,12 +48,7 @@ public class MinhasOfertasPresenter implements Observer {
     }
 
     private void alterarOferta() {
-        int selectedRow = view.getTabelaOfertas().getSelectedRow();
-        if (selectedRow < 0) {
-            view.exibirMensagem("Selecione uma oferta para alterar.");
-            return;
-        }
-        Oferta ofertaSelecionada = getOfertaSelecionada(selectedRow);
+        Oferta ofertaSelecionada = getOfertaSelecionada();
         if (ofertaSelecionada == null) return;
 
         Item itemOfertado = anuncioRepository.findByIdc(ofertaSelecionada.getIdcItem());
@@ -76,11 +66,18 @@ public class MinhasOfertasPresenter implements Observer {
         tela.setVisible(true);
     }
 
-    private Oferta getOfertaSelecionada(int selectedRow) {
+    // --- MÉTODO CORRIGIDO AQUI ---
+    private Oferta getOfertaSelecionada() {
+        int selectedRow = view.getTabelaOfertas().getSelectedRow();
+        if (selectedRow < 0) {
+            view.exibirMensagem("Selecione uma oferta.");
+            return null;
+        }
         String idc = (String) view.getTabelaOfertas().getValueAt(selectedRow, 0);
 
+        // A comparação agora é feita usando os IDs
         return ofertaRepository.getOfertas().stream()
-                .filter(o -> o.getIdcItem().equals(idc) && o.getNomeComprador().equals(comprador.getNome()))
+                .filter(o -> o.getIdcItem().equals(idc) && o.getIdComprador() == comprador.getId())
                 .findFirst().orElse(null);
     }
 

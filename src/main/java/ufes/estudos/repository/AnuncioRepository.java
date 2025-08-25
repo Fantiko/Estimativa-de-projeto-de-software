@@ -65,13 +65,15 @@ public class AnuncioRepository extends Subject {
      * @param nomeVendedor O nome do vendedor para filtrar os anúncios.
      * @return Uma lista contendo apenas os itens do vendedor especificado.
      */
-    public List<Item> getAnunciosByVendedor(String nomeVendedor) {
+    // O método agora recebe um int (idVendedor) em vez de uma String
+    public List<Item> getAnunciosByVendedor(int idVendedor) {
         List<Item> anunciosDoVendedor = new ArrayList<>();
         for (Item item : this.anuncios) {
-            if (item.getIdVendedor() != null && item.getIdVendedor().equals(nomeVendedor)) {
+            // A comparação agora é de int com int (e não precisa checar por null)
+            if (item.getIdVendedor() == idVendedor) {
                 anunciosDoVendedor.add(item);
             }
         }
-        return anunciosDoVendedor; // Retorna a lista filtrada
+        return anunciosDoVendedor;
     }
 }

@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public interface IGerenciarOfertasView {
-    void atualizarTabela(List<Oferta> ofertas);
+    void atualizarTabela(List<Object[]> dadosLinhas);
     JTable getTabelaOfertas();
     void setAceitarListener(ActionListener listener);
     void setRecusarListener(ActionListener listener);

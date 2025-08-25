@@ -20,4 +20,5 @@ public interface IAdicionarAnuncioView {
     void setCancelarListener(ActionListener listener);
     void exibirMensagem(String mensagem);
     void fechar();
+    void setComposicaoOptions(String[] materiais); // <<< ADICIONE ESTA LINHA
 }
