@@ -33,7 +33,7 @@ public class CatalogoPresenter {
 
         for (Item item : todosAnuncios) {
             // AQUI ESTÁ O FILTRO: Pula o item se o nome do vendedor for igual ao do usuário logado
-            if (item.getNomeVendedor().equals(this.usuario.getNome())) {
+            if (item.getIdVendedor().equals(this.usuario.getNome())) {
                 continue; // Pula para a próxima iteração do loop
             }
 
@@ -43,7 +43,7 @@ public class CatalogoPresenter {
             dadosParaTabela.add(new Object[]{
                     item.getIdentificadorCircular(),
                     item.getTipoPeca(),
-                    item.getNomeVendedor(),
+                    item.getIdVendedor(),
                     String.format("%.2f", precoFinal),
                     String.format("%.2f", mci),
                     String.format("%.4f", item.getGwpAvoided())

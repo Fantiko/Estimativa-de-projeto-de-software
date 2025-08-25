@@ -13,4 +13,6 @@ public interface ItemRepository {
     Optional<Item> buscarPorId(String identificadorCircular);
     List<Item> buscarPorVendedorId(int vendedorId);
     List<Item> buscarTodos();
+
+    int contarItensPorVendedor(int vendedorId);
 }
