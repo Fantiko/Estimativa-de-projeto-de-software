@@ -18,7 +18,13 @@
         <dependency>
             <groupId>com.github.claytonfraga</groupId>
             <artifactId>validadorsenha</artifactId>
-            <version>-SNAPSHOT</version>
+            <version>master</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.Fantiko</groupId>
+            <artifactId>ModuloLog</artifactId>
+            <version>v1.2</version>
         </dependency>
     </dependencies>
 
