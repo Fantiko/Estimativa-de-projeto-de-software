@@ -8,10 +8,11 @@ import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Model.eventos.EventoTimeline;
 import ufes.estudos.Model.eventos.TipoEvento;
 import ufes.estudos.Views.IAdicionarAnuncioView;
-import ufes.estudos.repository.AnuncioRepository;
+import ufes.estudos.repository.RepositoriesIntefaces.AnuncioRepository;
 import ufes.estudos.repository.PerfilRepository;
 import ufes.estudos.repository.RepositoriesIntefaces.DefeitoRepository;
 import ufes.estudos.repository.RepositoriesIntefaces.MaterialRepository;
+import ufes.estudos.repository.RepositoriesSQLite.AnuncioSQLiteRepository;
 import ufes.estudos.repository.RepositoriesSQLite.DefeitoSQLiteRepository;
 import ufes.estudos.repository.RepositoriesSQLite.MaterialSQLiteRepository;
 import ufes.estudos.repository.TimelineRepository;
@@ -40,7 +41,7 @@ public class AdicionarAnuncioPresenter {
         this.view = view;
         this.usuario = usuario;
         this.idService = new IdService();
-        this.anuncioRepository = AnuncioRepository.getInstance(); // Supondo que este já foi migrado
+        this.anuncioRepository = new AnuncioSQLiteRepository(new SQLiteConnectionManager());
 
         // Inicializa os repositórios
         SQLiteConnectionManager connectionManager = new SQLiteConnectionManager();
@@ -98,7 +99,7 @@ public class AdicionarAnuncioPresenter {
                 // O loop continua ENQUANTO o item for encontrado (ou seja, o ID não for único)
                 do {
                     idc = idService.generate();
-                } while (anuncioRepository.findByIdc(idc) != null); // Checa se o objeto é nulo ou não
+                } while (anuncioRepository.findByIdc(idc).isPresent()); // Checa se o objeto é nulo ou não
             }
 
             Item novoItem = new Item(

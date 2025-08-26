@@ -5,6 +5,7 @@ import ufes.estudos.Model.Usuario.Insignia;
 import ufes.estudos.Model.Usuario.NivelReputacao;
 import ufes.estudos.Model.Usuario.PerfilComprador;
 import ufes.estudos.Model.Usuario.Usuario;
+import ufes.estudos.dao.PerfilCompradorDAO;
 import ufes.estudos.repository.RepositoriesIntefaces.InsigniasRepository;
 import ufes.estudos.repository.RepositoriesIntefaces.PerfilCompradorRepository;
 
@@ -13,6 +14,17 @@ import java.util.List;
 import java.util.Optional;
 
 public class PerfilCompradorSQLiteRepository implements PerfilCompradorRepository{
+    private final SQLiteConnectionManager connectionManager;
+
+
+    public PerfilCompradorSQLiteRepository() {
+        this.connectionManager = new SQLiteConnectionManager();
+    }
+    public PerfilCompradorSQLiteRepository(SQLiteConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
+
+
     @Override
     public void adicionar(PerfilComprador perfil) {
         String sql = "INSERT INTO perfilComprador (usuarioId) VALUES (?)";
@@ -40,53 +52,8 @@ public class PerfilCompradorSQLiteRepository implements PerfilCompradorRepositor
 
     @Override
     public void atualizar(PerfilComprador perfil) {
-        String sql = "UPDATE perfilComprador SET nivelReputacao = ?, totalEstrelas = ?, comprasFinalizadas = ?, CO2Evitado = ?, seloVerificado = ?, estatisticaDenunciasProcedentes = ? WHERE id = ?";
-        try (var con = SQLiteConnectionManager.getConnection();
-             var stmt = con.prepareStatement(sql)) {
-
-            stmt.setString(1, perfil.getNivelReputacao().name());
-            stmt.setDouble(2, perfil.getTotalEstrelas());
-            stmt.setInt(3, perfil.getComprasFinalizadas());
-            stmt.setDouble(4, perfil.getCO2Evitado());
-            stmt.setInt(5, perfil.isVerificado() ? 1 : 0);
-            stmt.setDouble(6, perfil.getEstatisticaDenunciasProcedentes());
-            stmt.setInt(7, perfil.getId());
-
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException("Atualização falhou, nenhuma linha afetada.");
-            }
-        } catch (Exception e) {
-            System.err.println("Erro ao atualizar perfil comprador: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public Optional<PerfilComprador> buscarPorId(int id) {
-        String sql = "SELECT * FROM perfilComprador WHERE id = ?";
-        try (var con = SQLiteConnectionManager.getConnection();
-             var stmt = con.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            try (var rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    PerfilComprador perfil = new PerfilComprador();
-                    perfil.setId(rs.getInt("id"));
-                    perfil.setNivelReputacao(NivelReputacao.valueOf(rs.getString("nivelReputacao")));
-                    perfil.setTotalEstrelas(rs.getDouble("totalEstrelas"));
-                    perfil.setComprasFinalizadas(rs.getInt("comprasFinalizadas"));
-                    perfil.setCO2Evitado(rs.getDouble("CO2Evitado"));
-                    perfil.setSeloVerificado(rs.getBoolean("seloVerificado"));
-                    perfil.setEstatisticaDenunciasProcedentes(rs.getDouble("estatisticaDenunciasProcedentes"));
-                    perfil.setInsigniasPermanentes(buscarInsignias(perfil.getId()));
-
-                    // Defina outros atributos conforme necessário
-                    return Optional.of(perfil);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return Optional.empty();
+        // Instancia o DAO e delega a tarefa de atualização
+        new PerfilCompradorDAO(connectionManager).update(perfil);
     }
 
     @Override
@@ -157,6 +124,20 @@ public class PerfilCompradorSQLiteRepository implements PerfilCompradorRepositor
         }
 
         return null;
+    }
+
+    @Override
+    public void adicionarInsignia(int perfilCompradorId, int insigniaId) {
+        // TODO: Implementar a lógica SQL para inserir na tabela 'perfilCompradorInsignias'
+        // String sql = "INSERT INTO perfilCompradorInsignias (perfilCompradorId, insigniaId) VALUES (?, ?)";
+        System.out.println("Funcionalidade 'adicionarInsignia' para comprador ainda não implementada.");
+    }
+
+    @Override
+    public void removerInsignia(int perfilCompradorId, int insigniaId) {
+        // TODO: Implementar a lógica SQL para deletar da tabela 'perfilCompradorInsignias'
+        // String sql = "DELETE FROM perfilCompradorInsignias WHERE perfilCompradorId = ? AND insigniaId = ?";
+        System.out.println("Funcionalidade 'removerInsignia' para comprador ainda não implementada.");
     }
 
 }

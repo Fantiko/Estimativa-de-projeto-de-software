@@ -3,25 +3,12 @@ package ufes.estudos.service.ServiceInterfaces;
 import ufes.estudos.Model.Usuario.Insignia;
 import ufes.estudos.Model.Usuario.PerfilVendedor;
 import ufes.estudos.Model.Usuario.Usuario;
-
 import java.util.List;
 
 public interface PerfilVendedorServiceInterface {
     void criarPerfilVendedor(Usuario usuario);
-
+    void atualizar(PerfilVendedor perfil);
     PerfilVendedor buscarPerfilVendedorPorUsuario(Usuario usuario);
-
-    void adicionarInsignia(int perfilCompradorId, int insigniaId);
-
-    void removerInsignia(int perfilCompradorId, int insigniaId);
-
-    int contarInsignias();
-
-    void adicionar(int perfilId, int insigniaId);
-
-    String buscarDescricao(int idInsignea);
-
-    List<Insignia> buscarTodas();
-
-    List<Insignia> listarTodasInsignias();
+    void adicionarInsignia(PerfilVendedor perfil, Insignia insignia);
+    List<Insignia> buscarInsignias(PerfilVendedor perfil);
 }

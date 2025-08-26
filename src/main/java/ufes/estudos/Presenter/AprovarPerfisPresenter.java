@@ -24,11 +24,19 @@ public class AprovarPerfisPresenter implements Observer {
         this.view = view;
         this.solicitacaoRepository = SolicitacaoRepository.getInstance();
 
-        // Inicializa os serviços com as implementações do SQLite
-        this.usuarioService = new UsuarioService(new UsuarioSQLiteRepository(new SQLiteConnectionManager()));
-        this.perfilVendedorService = new PerfilVendedorService(new PerfilVendedorSQLiteRepository(new SQLiteConnectionManager()), new InsigniaVendedorSQLiteRepository());
-        this.perfilCompradorService = new PerfilCompradorService(new PerfilCompradorSQLiteRepository(), new InsigniaCompradorSQLiteRepository());
+        SQLiteConnectionManager manager = new SQLiteConnectionManager();
 
+        this.usuarioService = new UsuarioService(new UsuarioSQLiteRepository(manager));
+
+        this.perfilVendedorService = new PerfilVendedorService(
+                new PerfilVendedorSQLiteRepository(manager),
+                new InsigniaVendedorSQLiteRepository(manager)
+        );
+
+        this.perfilCompradorService = new PerfilCompradorService(
+                new PerfilCompradorSQLiteRepository(manager),
+                new InsigniaCompradorSQLiteRepository(manager) // <<< CORRIGIDO AQUI
+        );
 
         this.solicitacaoRepository.addObserver(this);
         this.view.setAprovarListener(e -> processarSolicitacao(true));

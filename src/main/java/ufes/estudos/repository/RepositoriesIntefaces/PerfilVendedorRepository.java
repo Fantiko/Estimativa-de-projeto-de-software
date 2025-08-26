@@ -11,6 +11,9 @@ public interface PerfilVendedorRepository {
     Optional<PerfilVendedor> adicionar(PerfilVendedor perfil);
     void atualizar(PerfilVendedor perfil);
     Optional<PerfilVendedor> buscarPorUsuarioId(Usuario usuario);
-    List<Insignia> buscarInsignias(int perfilVendedorId);
 
+    // --- MÉTODOS DE INSÍGNIA NO LUGAR CORRETO ---
+    void adicionarInsignia(int perfilVendedorId, int insigniaId);
+    void removerInsignia(int perfilVendedorId, int insigniaId);
+    List<Insignia> buscarInsignias(int perfilVendedorId);
 }

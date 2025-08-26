@@ -7,11 +7,10 @@ import ufes.estudos.repository.RepositoriesIntefaces.InsigniasRepository;
 
 import java.util.List;
 
-public class InsigniaCompradorSQLiteRepository implements InsigniasRepository {
+public class InsigniasSQLiteRepository implements InsigniasRepository {
     private final InsigniasDAO insigniasDAO;
 
-    // Construtor corrigido para receber o gerenciador de conexão
-    public InsigniaCompradorSQLiteRepository(SQLiteConnectionManager connectionManager) {
+    public InsigniasSQLiteRepository(SQLiteConnectionManager connectionManager) {
         this.insigniasDAO = new InsigniasDAO(connectionManager);
     }
 
@@ -20,7 +19,6 @@ public class InsigniaCompradorSQLiteRepository implements InsigniasRepository {
         insigniasDAO.insert(nome, descricao);
     }
 
-    // --- MÉTODO QUE FALTAVA ADICIONADO AQUI ---
     @Override
     public List<Insignia> buscarTodas() {
         return insigniasDAO.getAll();
@@ -31,9 +29,13 @@ public class InsigniaCompradorSQLiteRepository implements InsigniasRepository {
         return buscarTodas().size();
     }
 
+    // --- MÉTODO ADICIONADO PARA RESOLVER O ERRO ---
+    // A interface exige este método, então o adicionamos.
+    // A lógica interna pode ser implementada no futuro.
     @Override
     public void removerInsignia(int idPerfil, int idInsignia) {
-        // Lógica futura para remover a relação entre a insígnia e o perfil
+        // TODO: Implementar a lógica para remover uma insígnia de um perfil no banco de dados.
+        // Ex: "DELETE FROM perfilCompradorInsignias WHERE perfilCompradorId = ? AND insigniaId = ?"
         System.out.println("Funcionalidade 'removerInsignia' ainda não implementada.");
     }
 }

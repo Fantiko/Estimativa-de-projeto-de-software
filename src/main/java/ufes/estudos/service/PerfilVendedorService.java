@@ -14,10 +14,12 @@ public class PerfilVendedorService implements PerfilVendedorServiceInterface {
 
     private final PerfilVendedorRepository perfilVendedorRepository;
     private final InsigniasRepository insigniasRepository;
+
     public PerfilVendedorService(PerfilVendedorRepository perfilVendedorRepository, InsigniasRepository insigniasRepository) {
         this.perfilVendedorRepository = perfilVendedorRepository;
         this.insigniasRepository = insigniasRepository;
     }
+
     @Override
     public void criarPerfilVendedor(Usuario usuario) {
         PerfilVendedor perfilVendedor = new PerfilVendedor(usuario);
@@ -25,52 +27,29 @@ public class PerfilVendedorService implements PerfilVendedorServiceInterface {
     }
 
     @Override
+    public void atualizar(PerfilVendedor perfil) {
+        perfilVendedorRepository.atualizar(perfil);
+    }
+
+    @Override
     public PerfilVendedor buscarPerfilVendedorPorUsuario(Usuario usuario) {
         Optional<PerfilVendedor> perfilVendedor = perfilVendedorRepository.buscarPorUsuarioId(usuario);
-
         if (perfilVendedor.isPresent()) {
             return perfilVendedor.get();
         } else {
             throw new RuntimeException("Perfil Vendedor não encontrado para o usuário: " + usuario.getId());
-
         }
     }
 
     @Override
-    public void adicionarInsignia(int perfilCompradorId, int insigniaId) {
-        insigniasRepository.adicionarInsignia(perfilCompradorId, insigniaId);
+    public void adicionarInsignia(PerfilVendedor perfil, Insignia insignia) {
+        // A lógica de negócio estaria aqui. Ex: verificar se a insignia existe
+        // e depois chamar o repositório correto.
+        perfilVendedorRepository.adicionarInsignia(perfil.getId(), insignia.getId());
     }
 
     @Override
-    public void removerInsignia(int perfilId, int insigniaId) {
-        insigniasRepository.removerInsignia(perfilId, insigniaId);
+    public List<Insignia> buscarInsignias(PerfilVendedor perfil) {
+        return perfilVendedorRepository.buscarInsignias(perfil.getId());
     }
-
-    @Override
-    public int contarInsignias() {
-        return insigniasRepository.contarInsignias();
-    }
-
-    @Override
-    public void adicionar(int perfilId, int insigniaId) {
-        insigniasRepository.adicionarInsignia(perfilId, insigniaId);
-    }
-
-    @Override
-    public String buscarDescricao(int idInsignea) {
-        return insigniasRepository.buscarDescricao(idInsignea);
-    }
-
-    @Override
-    public List<Insignia> buscarTodas() {
-
-        return insigniasRepository.listarTodasInsignias();
-    }
-
-    @Override
-    public List<Insignia> listarTodasInsignias() {
-        return insigniasRepository.listarTodasInsignias();
-    }
-
-
 }

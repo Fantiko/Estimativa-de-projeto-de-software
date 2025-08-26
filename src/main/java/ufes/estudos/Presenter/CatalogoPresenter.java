@@ -5,8 +5,9 @@ import ufes.estudos.Model.Item.Item;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.ICatalogoView;
 import ufes.estudos.Views.TelaNegociacao;
-import ufes.estudos.repository.AnuncioRepository;
+import ufes.estudos.repository.RepositoriesIntefaces.AnuncioRepository;
 import ufes.estudos.repository.RepositoriesIntefaces.UsuarioRepository;
+import ufes.estudos.repository.RepositoriesSQLite.AnuncioSQLiteRepository;
 import ufes.estudos.repository.RepositoriesSQLite.UsuarioSQLiteRepository; // <<< IMPORT CORRIGIDO
 
 import javax.swing.*;
@@ -24,7 +25,7 @@ public class CatalogoPresenter {
     public CatalogoPresenter(ICatalogoView view, Usuario usuario) {
         this.view = view;
         this.usuario = usuario;
-        this.anuncioRepository = AnuncioRepository.getInstance();
+        this.anuncioRepository = new AnuncioSQLiteRepository(new SQLiteConnectionManager());
 
         // <<< INSTANCIAÇÃO CORRIGIDA >>>
         this.usuarioRepository = new UsuarioSQLiteRepository(new SQLiteConnectionManager());
@@ -77,7 +78,7 @@ public class CatalogoPresenter {
 
         // --- CORREÇÃO AQUI ---
         // O método findByIdc já retorna o Item ou null, então removemos o .orElse(null)
-        Item itemSelecionado = anuncioRepository.findByIdc(idc);
+        Item itemSelecionado = anuncioRepository.findByIdc(idc).orElse(null);
 
         if (itemSelecionado == null) {
             view.exibirMensagem("Erro: Item não encontrado ou não está mais disponível.");
