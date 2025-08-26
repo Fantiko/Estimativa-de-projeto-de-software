@@ -1,5 +1,6 @@
 package ufes.estudos.service;
 
+import com.pss.senha.validacao.ValidadorSenha;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.repository.RepositoriesIntefaces.UsuarioRepository;
 import ufes.estudos.service.ServiceInterfaces.UsuarioServiceInterface;
@@ -7,9 +8,11 @@ import java.util.Optional;
 
 public class UsuarioService implements UsuarioServiceInterface {
     private final UsuarioRepository usuarioRepository;
+    private final ValidadorSenha validadorSenha = new ValidadorSenha();
 
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
+
     }
 
     @Override
@@ -43,7 +46,6 @@ public class UsuarioService implements UsuarioServiceInterface {
         return usuarioRepository.buscarPorUsuario(username);
     }
 
-    // --- MÉTODO ADICIONADO AQUI ---
     @Override
     public long totalUsuarios() {
         return usuarioRepository.contarUsuarios();
