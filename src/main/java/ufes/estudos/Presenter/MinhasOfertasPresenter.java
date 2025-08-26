@@ -1,13 +1,15 @@
 package ufes.estudos.Presenter;
 
+import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager;
 import ufes.estudos.Model.Item.Item;
 import ufes.estudos.Model.transacao.Oferta;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.IMinhasOfertasView;
 import ufes.estudos.Views.TelaNegociacao;
 import ufes.estudos.observer.Observer;
-import ufes.estudos.repository.AnuncioRepository;
+import ufes.estudos.repository.RepositoriesIntefaces.AnuncioRepository;
 import ufes.estudos.repository.OfertaRepository;
+import ufes.estudos.repository.RepositoriesSQLite.AnuncioSQLiteRepository;
 
 import javax.swing.*;
 import java.util.List;
@@ -23,7 +25,7 @@ public class MinhasOfertasPresenter implements Observer {
         this.view = view;
         this.comprador = comprador;
         this.ofertaRepository = OfertaRepository.getInstance();
-        this.anuncioRepository = AnuncioRepository.getInstance();
+        this.anuncioRepository = new AnuncioSQLiteRepository(new SQLiteConnectionManager());
         this.ofertaRepository.addObserver(this);
 
         this.view.setAlterarListener(e -> alterarOferta());
@@ -51,7 +53,7 @@ public class MinhasOfertasPresenter implements Observer {
         Oferta ofertaSelecionada = getOfertaSelecionada();
         if (ofertaSelecionada == null) return;
 
-        Item itemOfertado = anuncioRepository.findByIdc(ofertaSelecionada.getIdcItem());
+        Item itemOfertado = anuncioRepository.findByIdc(ofertaSelecionada.getIdcItem()).orElse(null);
         if (itemOfertado == null) {
             view.exibirMensagem("Este item não está mais disponível para negociação.");
             ofertaRepository.removeOferta(ofertaSelecionada);

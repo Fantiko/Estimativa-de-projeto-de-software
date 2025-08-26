@@ -1,14 +1,35 @@
 package ufes.estudos.service;
 
+import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager;
 import ufes.estudos.Model.Usuario.NivelReputacao;
 import ufes.estudos.Model.Usuario.PerfilComprador;
 import ufes.estudos.Model.Usuario.PerfilVendedor;
 import ufes.estudos.repository.PerfilRepository;
+import ufes.estudos.repository.RepositoriesSQLite.InsigniasSQLiteRepository;
+import ufes.estudos.repository.RepositoriesSQLite.PerfilCompradorSQLiteRepository;
+import ufes.estudos.repository.RepositoriesSQLite.PerfilVendedorSQLiteRepository;
 
 public class ReputacaoService {
     private static ReputacaoService instance;
+    private final PerfilVendedorService perfilVendedorService;
+    private final PerfilCompradorService perfilCompradorService;
 
-    private ReputacaoService() {}
+    private ReputacaoService() {
+        SQLiteConnectionManager manager = new SQLiteConnectionManager();
+
+        // --- CORREÇÃO AQUI ---
+        // Agora passamos as duas dependências que o serviço precisa
+        this.perfilVendedorService = new PerfilVendedorService(
+                new PerfilVendedorSQLiteRepository(manager),
+                new InsigniasSQLiteRepository(manager)
+        );
+
+        // Fazendo o mesmo para o PerfilComprador para garantir consistência
+        this.perfilCompradorService = new PerfilCompradorService(
+                new PerfilCompradorSQLiteRepository(manager),
+                new InsigniasSQLiteRepository(manager)
+        );
+    }
 
     public static ReputacaoService getInstance() {
         if (instance == null) {
@@ -55,6 +76,7 @@ public class ReputacaoService {
         }
         vendedor.setTotalEstrelas(vendedor.getTotalEstrelas() + quantidade);
         promoverVendedorSeNecessario(vendedor);
+        perfilVendedorService.atualizar(vendedor);
     }
 
     private void adicionarEstrelasComprador(PerfilComprador comprador, double quantidade) {
@@ -63,6 +85,7 @@ public class ReputacaoService {
         }
         comprador.setTotalEstrelas(comprador.getTotalEstrelas() + quantidade);
         promoverCompradorSeNecessario(comprador);
+        perfilCompradorService.atualizar(comprador);
     }
 
     // --- LÓGICA DE EVOLUÇÃO DE NÍVEL ---

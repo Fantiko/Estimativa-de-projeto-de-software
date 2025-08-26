@@ -58,7 +58,7 @@ public class SetupDAO {
                         "totalEstrelas REAL NOT NULL DEFAULT 0.0, " +
                         "vendasConcluidas INTEGER NOT NULL DEFAULT 0, " +
                         "denunciasRecebidas INTEGER NOT NULL DEFAULT 0, " +
-                        "beneficioClimaticoContribuido REAL NOT NULL DEFAULT 0.0, " +
+                        "beneficioClimaticoContribuido REAL NOT NULL DEFAULT 0.0, " + // <<< VÍRGULA REMOVIDA DAQUI
                         "FOREIGN KEY(usuario_id) REFERENCES usuarios(id)" +
                         ");",
 
@@ -71,7 +71,7 @@ public class SetupDAO {
                         "comprasFinalizadas INTEGER NOT NULL DEFAULT 0, " +
                         "seloVerificado INTEGER NOT NULL DEFAULT 0, " +
                         "co2Evitado REAL NOT NULL DEFAULT 0.0, " +
-                        "denunciasProcedentes REAL NOT NULL DEFAULT 0.0, " +
+                        "denunciasProcedentes REAL NOT NULL DEFAULT 0.0, " + // <<< VÍRGULA REMOVIDA DAQUI
                         "FOREIGN KEY(usuarioId) REFERENCES usuarios(id)" +
                         ");",
 
@@ -92,13 +92,62 @@ public class SetupDAO {
                 // Tabela de Itens (Anúncios)
                 "CREATE TABLE IF NOT EXISTS itens (" +
                         "identificadorCircular TEXT PRIMARY KEY, " +
-                        "tipoPeca TEXT, subcategoria TEXT, tamanho TEXT, corPredominante TEXT, " +
-                        "estadoConservacao TEXT, massaEstimada REAL, precoBase REAL, " +
-                        "nomeVendedor TEXT, gwpBase REAL, gwpAvoided REAL, ciclo INTEGER, " +
-                        "vendedorId INTEGER NOT NULL, material_nome TEXT, defeito_nome TEXT, " +
-                        "FOREIGN KEY(vendedorId) REFERENCES perfilVendedor(id)" +
+                        "tipoPeca TEXT NOT NULL, " +
+                        "subcategoria TEXT NOT NULL, " +
+                        "tamanho TEXT NOT NULL, " +
+                        "corPredominante TEXT NOT NULL, " +
+                        "estadoConservacao TEXT NOT NULL, " +
+                        "massaEstimada REAL NOT NULL, " +
+                        "precoBase REAL NOT NULL, " +
+                        "idVendedor INTEGER NOT NULL, " +
+                        "material_nome TEXT NOT NULL, " + // Para simplicidade, armazenamos o nome
+                        "defeito_nome TEXT, " +         // Para simplicidade, armazenamos o nome
+                        "gwpBase REAL NOT NULL, " +
+                        "gwpAvoided REAL NOT NULL, " +
+                        "ciclo INTEGER NOT NULL, " +
+                        "FOREIGN KEY(idVendedor) REFERENCES usuarios(id)" +
+                        ");",
+
+                // Tabela de Ofertas
+                "CREATE TABLE IF NOT EXISTS ofertas (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "idcItem TEXT NOT NULL, " +
+                        "idComprador INTEGER NOT NULL, " +
+                        "idVendedor INTEGER NOT NULL, " +
+                        "valorOfertado REAL NOT NULL, " +
+                        "dataOferta TEXT NOT NULL" +
+                        ");",
+
+                // Tabela de Solicitações
+                "CREATE TABLE IF NOT EXISTS solicitacoes (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "nomeUsuario TEXT NOT NULL, " +
+                        "perfilSolicitado TEXT NOT NULL, " +
+                        "dataSolicitacao TEXT NOT NULL, " +
+                        "UNIQUE(nomeUsuario, perfilSolicitado)" +
+                        ");",
+
+                // Tabela de Vendas
+                "CREATE TABLE IF NOT EXISTS vendas (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "idcItem TEXT NOT NULL, " +
+                        "nomeComprador TEXT NOT NULL, " +
+                        "nomeVendedor TEXT NOT NULL, " +
+                        "valorFinal REAL NOT NULL, " +
+                        "gwpEvitado REAL NOT NULL, " +
+                        "dataVenda TEXT NOT NULL" +
+                        ");",
+
+                // Tabela da Linha do Tempo
+                "CREATE TABLE IF NOT EXISTS timeline (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "idcItem TEXT NOT NULL, " +
+                        "tipoEvento TEXT NOT NULL, " +
+                        "dataEvento TEXT NOT NULL, " +
+                        "gwpAvoided REAL, " +
+                        "mci REAL, " +
+                        "detalhes TEXT" +
                         ");"
-                // Adicione outras tabelas como ofertas, vendas, etc., se necessário
         };
 
         try (Connection conn = SQLiteConnectionManager.getConnection();
@@ -109,6 +158,7 @@ public class SetupDAO {
             System.out.println("Tabelas criadas com sucesso (ou já existentes).");
         } catch (SQLException e) {
             System.err.println("Erro ao criar tabelas: " + e.getMessage());
+            e.printStackTrace(); // Ajuda a ver o erro mais detalhado
         }
     }
 

@@ -27,6 +27,11 @@ public class PerfilCompradorService implements PerfilCompradorServiceInterface {
     }
 
     @Override
+    public void atualizar(PerfilComprador perfil) {
+        perfilCompradorRepository.atualizar(perfil);
+    }
+
+    @Override
     public PerfilComprador buscarPerfilCompradorPorUsuario(Usuario usuario) {
         Optional<PerfilComprador> perfil = perfilCompradorRepository.buscarPorUsuarioId(usuario);
         if (perfil.isPresent()) {
@@ -36,27 +41,13 @@ public class PerfilCompradorService implements PerfilCompradorServiceInterface {
     }
 
     @Override
-    public void adicionarInsignia(int perfilId, int insigniaId) {
-        insigniasRepository.adicionarInsignia(perfilId, insigniaId);
+    public void adicionarInsignia(PerfilComprador perfil, Insignia insignia) {
+        // A chamada agora é para o repositório correto
+        perfilCompradorRepository.adicionarInsignia(perfil.getId(), insignia.getId());
     }
 
     @Override
-    public void removerInsignia(int perfilId, int insigniaId) {
-        insigniasRepository.removerInsignia(perfilId, insigniaId);
-    }
-
-    @Override
-    public int contarInsignias() {
-        return insigniasRepository.contarInsignias();
-    }
-
-    @Override
-    public String buscarDescricao(int idInsignea) {
-        return insigniasRepository.buscarDescricao(idInsignea);
-    }
-
-    @Override
-    public List<Insignia> listarTodasInsignias() {
-        return insigniasRepository.listarTodasInsignias();
+    public List<Insignia> buscarInsignias(PerfilComprador perfil) {
+        return perfilCompradorRepository.buscarInsignias(perfil.getId());
     }
 }

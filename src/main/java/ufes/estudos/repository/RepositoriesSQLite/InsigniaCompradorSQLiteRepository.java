@@ -2,103 +2,38 @@ package ufes.estudos.repository.RepositoriesSQLite;
 
 import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager;
 import ufes.estudos.Model.Usuario.Insignia;
+import ufes.estudos.dao.InsigniasDAO;
 import ufes.estudos.repository.RepositoriesIntefaces.InsigniasRepository;
 
 import java.util.List;
 
 public class InsigniaCompradorSQLiteRepository implements InsigniasRepository {
-    @Override
-    public List<Insignia> buscarInsignias(int perfilCompradorId) {
-        String sql = "SELECT \n" +
-                "    i.id AS insigniaId,\n" +
-                "    i.nome AS nomeInsignia,\n" +
-                "    i.descricao,\n" +
-                "    pci.dataConquista\n" +
-                "FROM \n" +
-                "    perfilComprador AS pc\n" +
-                "JOIN \n" +
-                "    perfilCompradorInsignias AS pci ON pc.id = pci.perfilCompradorId\n" +
-                "JOIN \n" +
-                "    insignias AS i ON pci.insigniaId = i.id\n" +
-                "WHERE \n" +
-                "    pc.id = ?;";
-        try (var con = SQLiteConnectionManager.getConnection()){
-            var stmt = con.prepareStatement(sql);
-            stmt.setInt(1, perfilCompradorId);
-            var rs = stmt.executeQuery();
+    private final InsigniasDAO insigniasDAO;
 
-            List<Insignia> insignias = new java.util.ArrayList<>();
-            while (rs.next()) {
-                Insignia insignia = new Insignia();
-                insignia.setId(rs.getInt("insigniaId"));
-                insignia.setNome(rs.getString("nomeInsignia"));
-                insignia.setDescricao(rs.getString("descricao"));
-                insignia.setDataConquista(rs.getDate("dataConquista").toLocalDate());
-
-                insignias.add(insignia);
-            }
-            return insignias;
-
-        } catch (Exception e) {
-            System.err.println("Erro ao buscar insignias: " + e.getMessage());
-        }
-
-        return null;
+    // Construtor corrigido para receber o gerenciador de conexão
+    public InsigniaCompradorSQLiteRepository(SQLiteConnectionManager connectionManager) {
+        this.insigniasDAO = new InsigniasDAO(connectionManager);
     }
 
     @Override
-    public void adicionarInsignia(int perfilId, int insigniaId) {
-        String sql = "INSERT INTO perfilCompradorInsignias (perfilCompradorId, insigniaId) VALUES (?, ?)";
-        try (var con = SQLiteConnectionManager.getConnection()) {
-            var stmt = con.prepareStatement(sql);
-            stmt.setInt(1, perfilId);
-            stmt.setInt(2, insigniaId);
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            System.err.println("Erro ao adicionar insignia: " + e.getMessage());
-        }
+    public void adicionar(String nome, String descricao) {
+        insigniasDAO.insert(nome, descricao);
     }
 
+    // --- MÉTODO QUE FALTAVA ADICIONADO AQUI ---
     @Override
-    public String buscarDescricao(int idInsignea) {
-        String sql = "SELECT descricao FROM insignias WHERE id = ?";
-        try (var con = SQLiteConnectionManager.getConnection()) {
-            var stmt = con.prepareStatement(sql);
-            stmt.setInt(1, idInsignea);
-            var rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("descricao");
-            }
-        } catch (Exception e) {
-            System.err.println("Erro ao buscar descrição da insignia: " + e.getMessage());
-        }
-        return null;
+    public List<Insignia> buscarTodas() {
+        return insigniasDAO.getAll();
     }
 
     @Override
     public int contarInsignias() {
-        //todo
-        return 0;
+        return buscarTodas().size();
     }
 
     @Override
-    public List<Insignia> listarTodasInsignias() {
-        //todo
-        return null;
+    public void removerInsignia(int idPerfil, int idInsignia) {
+        // Lógica futura para remover a relação entre a insígnia e o perfil
+        System.out.println("Funcionalidade 'removerInsignia' ainda não implementada.");
     }
-
-    @Override
-    public void removerInsignia(int perfilId, int insigniaId) {
-        String sql = "DELETE FROM perfilCompradorInsignias WHERE perfilCompradorId = ? AND insigniaId = ?";
-        try (var con = SQLiteConnectionManager.getConnection()) {
-            var stmt = con.prepareStatement(sql);
-            stmt.setInt(1, perfilId);
-            stmt.setInt(2, insigniaId);
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            System.err.println("Erro ao remover insignia: " + e.getMessage());
-        }
-    }
-
-
 }

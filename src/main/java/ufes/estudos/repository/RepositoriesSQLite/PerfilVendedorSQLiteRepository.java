@@ -5,6 +5,7 @@ import ufes.estudos.Model.Usuario.Insignia;
 import ufes.estudos.Model.Usuario.NivelReputacao;
 import ufes.estudos.Model.Usuario.PerfilVendedor;
 import ufes.estudos.Model.Usuario.Usuario;
+import ufes.estudos.dao.PerfilVendedorDAO;
 import ufes.estudos.repository.RepositoriesIntefaces.PerfilVendedorRepository;
 
 import java.sql.Connection;
@@ -12,15 +13,20 @@ import java.util.List;
 import java.util.Optional;
 
 public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository {
-
     private final SQLiteConnectionManager connectionManager;
+
+
+    public PerfilVendedorSQLiteRepository() {
+        this.connectionManager = new SQLiteConnectionManager();
+    }
     public PerfilVendedorSQLiteRepository(SQLiteConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
     }
 
     @Override
     public Optional<PerfilVendedor> adicionar(PerfilVendedor perfil) {
-        String sql = "INSERT INTO perfilVendedor (usuarioId) VALUES (?)";
+        // --- CORREÇÃO AQUI ---
+        String sql = "INSERT INTO perfilVendedor (usuario_id) VALUES (?)";
         try (Connection con = SQLiteConnectionManager.getConnection();
              var stmt = con.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 
@@ -28,7 +34,7 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
             int affectedRows = stmt.executeUpdate();
 
             if (affectedRows == 0) {
-                return Optional.empty(); // Inserção falhou
+                return Optional.empty();
             }
 
             try (var generatedKeys = stmt.getGeneratedKeys()) {
@@ -36,43 +42,28 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
                     perfil.setId(generatedKeys.getInt(1));
                     return Optional.of(perfil);
                 } else {
-                    return Optional.empty(); // Falha ao obter o ID gerado
+                    return Optional.empty();
                 }
             }
         } catch (Exception e) {
             System.err.println("Erro ao adicionar perfil vendedor: " + e.getMessage());
             return Optional.empty();
-
         }
     }
 
+    // Dentro da classe PerfilVendedorSQLiteRepository.java
+
     @Override
     public void atualizar(PerfilVendedor perfil) {
-        String sql = "UPDATE perfilVendedor SET nivelReputacao = ?, totalEstrelas = ?, vendasConcluidas = ?, denunciasRecebidas = ?, beneficioClimaticoContribuido = ? WHERE id = ?";
-        try (Connection con = SQLiteConnectionManager.getConnection();
-             var stmt = con.prepareStatement(sql)) {
-
-            stmt.setString(1, perfil.getNivelReputacao().name());
-            stmt.setDouble(2, perfil.getTotalEstrelas());
-            stmt.setInt(3, perfil.getVendasConcluidas());
-            stmt.setInt(4, perfil.getDenunciasRecebidas());
-            stmt.setDouble(5, perfil.getBeneficioClimaticoContribuido());
-            stmt.setInt(6, perfil.getId());
-
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException("Atualização falhou, nenhuma linha afetada.");
-            }
-        } catch (Exception e) {
-            System.err.println("Erro ao atualizar perfil vendedor: " + e.getMessage());
-        }
-
+        // O "gerente" (Repositório) simplesmente delega a tarefa para o "funcionário" (DAO)
+        new PerfilVendedorDAO(connectionManager).update(perfil);
     }
 
     @Override
     public Optional<PerfilVendedor> buscarPorUsuarioId(Usuario usuario) {
-        String sql = "SELECT * FROM perfilVendedor WHERE usuarioId = ?";
-        try (Connection con = connectionManager.getConnection();
+        // --- CORREÇÃO AQUI ---
+        String sql = "SELECT * FROM perfilVendedor WHERE usuario_id = ?";
+        try (Connection con = SQLiteConnectionManager.getConnection();
              var stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, usuario.getId());
@@ -86,13 +77,11 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
                 perfil.setBeneficioClimaticoContribuido(rs.getDouble("beneficioClimaticoContribuido"));
                 perfil.setNivelReputacao(NivelReputacao.valueOf(rs.getString("nivelReputacao")));
                 perfil.setInsignias(buscarInsignias(perfil.getId()));
-
                 return Optional.of(perfil);
             }
         } catch (Exception e) {
             System.err.println("Erro ao buscar perfil vendedor por usuário ID: " + e.getMessage());
         }
-
         return Optional.empty();
     }
 
@@ -112,7 +101,7 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
                 "WHERE \n" +
                 "    pv.id = ?;";
 
-        try (Connection con = connectionManager.getConnection();
+        try (Connection con = SQLiteConnectionManager.getConnection();
              var stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, perfilVendedorId);
@@ -137,4 +126,31 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
 
         return null;
     }
+
+    @Override
+    public void adicionarInsignia(int perfilVendedorId, int insigniaId) {
+        String sql = "INSERT INTO perfilVendedorInsignias (perfilVendedorId, insigniaId) VALUES (?, ?)";
+        try (Connection con = SQLiteConnectionManager.getConnection();
+             var stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, perfilVendedorId);
+            stmt.setInt(2, insigniaId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Erro ao adicionar insignia ao vendedor: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void removerInsignia(int perfilVendedorId, int insigniaId) {
+        String sql = "DELETE FROM perfilVendedorInsignias WHERE perfilVendedorId = ? AND insigniaId = ?";
+        try (Connection con = SQLiteConnectionManager.getConnection();
+             var stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, perfilVendedorId);
+            stmt.setInt(2, insigniaId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Erro ao remover insignia do vendedor: " + e.getMessage());
+        }
+    }
+
 }

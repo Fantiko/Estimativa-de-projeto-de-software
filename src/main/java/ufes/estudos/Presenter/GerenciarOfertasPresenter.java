@@ -9,12 +9,14 @@ import ufes.estudos.Model.transacao.Oferta;
 import ufes.estudos.Model.transacao.Venda;
 import ufes.estudos.Views.IGerenciarOfertasView;
 import ufes.estudos.observer.Observer;
-import ufes.estudos.repository.AnuncioRepository;
+import ufes.estudos.repository.RepositoriesIntefaces.AnuncioRepository;
 import ufes.estudos.repository.OfertaRepository;
 import ufes.estudos.repository.PerfilRepository;
 import ufes.estudos.repository.RepositoriesIntefaces.UsuarioRepository;
-import ufes.estudos.repository.RepositoriesSQLite.UsuarioSQLiteRepository;
+import ufes.estudos.repository.RepositoriesSQLite.*;
 import ufes.estudos.repository.VendaRepository;
+import ufes.estudos.service.PerfilCompradorService;
+import ufes.estudos.service.PerfilVendedorService;
 import ufes.estudos.service.ReputacaoService;
 
 import java.time.Duration;
@@ -30,26 +32,93 @@ public class GerenciarOfertasPresenter implements Observer {
     private final OfertaRepository ofertaRepository;
     private final AnuncioRepository anuncioRepository;
     private final UsuarioRepository usuarioRepository;
-    private final PerfilRepository perfilRepository; // Usado para a sessão atual
+    private final PerfilRepository perfilRepository;
     private final VendaRepository vendaRepository;
 
-    private List<Oferta> minhasOfertasCache; // Cache para a seleção
+    // --- SERVIÇOS ADICIONADOS PARA ATUALIZAR PERFIS ---
+    private final PerfilVendedorService perfilVendedorService;
+    private final PerfilCompradorService perfilCompradorService;
+
+    private List<Oferta> minhasOfertasCache;
 
     public GerenciarOfertasPresenter(IGerenciarOfertasView view, Usuario vendedor) {
         this.view = view;
         this.vendedorUsuario = vendedor;
         this.ofertaRepository = OfertaRepository.getInstance();
-        this.anuncioRepository = AnuncioRepository.getInstance();
+        this.anuncioRepository = new AnuncioSQLiteRepository(new SQLiteConnectionManager());
         this.perfilRepository = PerfilRepository.getInstance();
         this.vendaRepository = VendaRepository.getInstance();
-        this.usuarioRepository = new UsuarioSQLiteRepository(new SQLiteConnectionManager());
+
+        SQLiteConnectionManager manager = new SQLiteConnectionManager();
+        this.usuarioRepository = new UsuarioSQLiteRepository(manager);
+
+        // --- INICIALIZAÇÃO DOS SERVIÇOS ---
+        this.perfilVendedorService = new PerfilVendedorService(
+                new PerfilVendedorSQLiteRepository(manager),
+                new InsigniasSQLiteRepository(manager)
+        );
+        this.perfilCompradorService = new PerfilCompradorService(
+                new PerfilCompradorSQLiteRepository(manager),
+                new InsigniasSQLiteRepository(manager)
+        );
 
         this.ofertaRepository.addObserver(this);
-
         this.view.setAceitarListener(e -> aceitarOferta());
         this.view.setRecusarListener(e -> recusarOferta());
-
         carregarOfertas();
+    }
+
+    private void aceitarOferta() {
+        Oferta ofertaGanhadora = getOfertaSelecionada();
+        if (ofertaGanhadora == null) return;
+
+        Item itemVendido = anuncioRepository.findByIdc(ofertaGanhadora.getIdcItem()).orElse(null);
+        if (itemVendido == null) {
+            view.exibirMensagem("Erro: O item do anúncio não foi encontrado. A oferta será removida.");
+            ofertaRepository.removerOfertasPorItem(ofertaGanhadora.getIdcItem());
+            return;
+        }
+
+        Usuario compradorUsuario = usuarioRepository.buscarPorId(ofertaGanhadora.getIdComprador()).orElse(null);
+        if(compradorUsuario == null){
+            view.exibirMensagem("Erro: Comprador não encontrado no sistema.");
+            return;
+        }
+
+        // O PerfilRepository em memória é usado para obter o objeto de perfil da sessão atual
+        PerfilVendedor perfilVendedor = perfilRepository.getVendedor(vendedorUsuario.getNome());
+        PerfilComprador perfilComprador = perfilRepository.getComprador(compradorUsuario.getNome());
+
+        double gwpEvitado = itemVendido.getGwpAvoided();
+
+        // ATUALIZA OS INDICADORES E SALVA NO BANCO
+        if(perfilVendedor != null) {
+            perfilVendedor.setBeneficioClimaticoContribuido(perfilVendedor.getBeneficioClimaticoContribuido() + gwpEvitado);
+            perfilVendedor.setVendasConcluidas(perfilVendedor.getVendasConcluidas() + 1);
+            perfilVendedorService.atualizar(perfilVendedor); // Salva no DB
+        }
+        if(perfilComprador != null) {
+            perfilComprador.setCO2Evitado(perfilComprador.getCO2Evitado() + gwpEvitado);
+            perfilComprador.setComprasFinalizadas(perfilComprador.getComprasFinalizadas() + 1);
+            perfilCompradorService.atualizar(perfilComprador); // Salva no DB
+        }
+
+        // REGISTRA A VENDA
+        Venda novaVenda = new Venda(itemVendido.getIdentificadorCircular(), compradorUsuario.getNome(), vendedorUsuario.getNome(), ofertaGanhadora.getValorOfertado(), gwpEvitado);
+        vendaRepository.addVenda(novaVenda);
+
+        // ATRIBUI REPUTAÇÃO (que também salva no banco através do ReputacaoService)
+        ReputacaoService.getInstance().processarVendaConcluida(vendedorUsuario.getNome(), compradorUsuario.getNome());
+        Duration duracao = Duration.between(ofertaGanhadora.getDataOferta(), LocalDateTime.now());
+        boolean dentroDoPrazo = duracao.toHours() < 24;
+        ReputacaoService.getInstance().processarRespostaOferta(perfilVendedor, dentroDoPrazo);
+
+        // LIMPA O MERCADO
+        anuncioRepository.deleteAnuncio(itemVendido.getIdentificadorCircular());
+        ofertaRepository.removerOfertasPorItem(itemVendido.getIdentificadorCircular());
+
+        view.exibirMensagem("Venda finalizada para " + compradorUsuario.getNome() + "!\n"
+                + String.format("Benefício climático de %.4f kg CO₂ registrado.", gwpEvitado));
     }
 
     private void carregarOfertas() {
@@ -80,58 +149,6 @@ public class GerenciarOfertasPresenter implements Observer {
             ofertaRepository.removeOferta(ofertaSelecionada);
             view.exibirMensagem("Oferta recusada.");
         }
-    }
-
-    // --- MÉTODO COMPLETO E CORRIGIDO ---
-    private void aceitarOferta() {
-        Oferta ofertaGanhadora = getOfertaSelecionada();
-        if (ofertaGanhadora == null) return;
-
-        String idcItemVendido = ofertaGanhadora.getIdcItem();
-        Item itemVendido = anuncioRepository.findByIdc(idcItemVendido);
-
-        if (itemVendido == null) {
-            view.exibirMensagem("Erro: O item do anúncio não foi encontrado. A oferta será removida.");
-            ofertaRepository.removerOfertasPorItem(idcItemVendido); // Limpa ofertas órfãs
-            return;
-        }
-
-        // 1. OBTÉM OS PERFIS E O NOME DO COMPRADOR
-        PerfilVendedor perfilVendedor = perfilRepository.getVendedor(vendedorUsuario.getNome());
-        Usuario compradorUsuario = usuarioRepository.buscarPorId(ofertaGanhadora.getIdComprador()).orElse(null);
-        if(compradorUsuario == null){
-            view.exibirMensagem("Erro: Comprador não encontrado no sistema.");
-            return;
-        }
-        PerfilComprador perfilComprador = perfilRepository.getComprador(compradorUsuario.getNome());
-
-        // 2. REGISTRA A VENDA
-        double gwpEvitado = itemVendido.getGwpAvoided();
-        Venda novaVenda = new Venda(idcItemVendido, compradorUsuario.getNome(), vendedorUsuario.getNome(), ofertaGanhadora.getValorOfertado(), gwpEvitado);
-        vendaRepository.addVenda(novaVenda);
-
-        // 3. ATUALIZA OS INDICADORES
-        if(perfilVendedor != null) {
-            perfilVendedor.setBeneficioClimaticoContribuido(perfilVendedor.getBeneficioClimaticoContribuido() + gwpEvitado);
-        }
-        if(perfilComprador != null) {
-            perfilComprador.setCO2Evitado(perfilComprador.getCO2Evitado() + gwpEvitado);
-            perfilComprador.setComprasFinalizadas(perfilComprador.getComprasFinalizadas() + 1);
-        }
-
-        // 4. ATRIBUI REPUTAÇÃO
-        ReputacaoService.getInstance().processarVendaConcluida(vendedorUsuario.getNome(), compradorUsuario.getNome());
-        Duration duracao = Duration.between(ofertaGanhadora.getDataOferta(), LocalDateTime.now());
-        boolean dentroDoPrazo = duracao.toHours() < 24;
-        ReputacaoService.getInstance().processarRespostaOferta(perfilVendedor, dentroDoPrazo);
-
-        // 5. LIMPA O MERCADO
-        anuncioRepository.deleteAnuncio(idcItemVendido);
-        ofertaRepository.removerOfertasPorItem(idcItemVendido);
-
-        // 6. DÁ O FEEDBACK FINAL
-        view.exibirMensagem("Venda finalizada para " + compradorUsuario.getNome() + "!\n"
-                + String.format("Benefício climático de %.4f kg CO₂ registrado.", gwpEvitado));
     }
 
     private Oferta getOfertaSelecionada() {
