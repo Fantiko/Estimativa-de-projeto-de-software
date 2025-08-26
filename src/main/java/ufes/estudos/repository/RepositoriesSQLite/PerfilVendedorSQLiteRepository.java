@@ -26,7 +26,7 @@ public class PerfilVendedorSQLiteRepository implements PerfilVendedorRepository 
     @Override
     public Optional<PerfilVendedor> adicionar(PerfilVendedor perfil) {
         // --- CORREÇÃO AQUI ---
-        String sql = "INSERT INTO perfilVendedor (usuario_id) VALUES (?)";
+        String sql = "INSERT INTO perfilVendedor (usuarioId) VALUES (?)";
         try (Connection con = SQLiteConnectionManager.getConnection();
              var stmt = con.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 
