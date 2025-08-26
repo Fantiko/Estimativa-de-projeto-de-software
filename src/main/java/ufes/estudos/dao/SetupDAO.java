@@ -53,13 +53,13 @@ public class SetupDAO {
                 // Tabela de Perfis de Vendedor
                 "CREATE TABLE IF NOT EXISTS perfilVendedor (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        "usuario_id INTEGER NOT NULL UNIQUE, " +
+                        "usuarioId INTEGER NOT NULL UNIQUE, " + // <<< NOME CORRIGIDO
                         "nivelReputacao TEXT NOT NULL DEFAULT 'bronze', " +
                         "totalEstrelas REAL NOT NULL DEFAULT 0.0, " +
                         "vendasConcluidas INTEGER NOT NULL DEFAULT 0, " +
                         "denunciasRecebidas INTEGER NOT NULL DEFAULT 0, " +
-                        "beneficioClimaticoContribuido REAL NOT NULL DEFAULT 0.0, " + // <<< VÍRGULA REMOVIDA DAQUI
-                        "FOREIGN KEY(usuario_id) REFERENCES usuarios(id)" +
+                        "beneficioClimaticoContribuido REAL NOT NULL DEFAULT 0.0, " +
+                        "FOREIGN KEY(usuarioId) REFERENCES usuarios(id)" + // <<< NOME CORRIGIDO
                         ");",
 
                 // Tabela de Perfis de Comprador
@@ -71,7 +71,7 @@ public class SetupDAO {
                         "comprasFinalizadas INTEGER NOT NULL DEFAULT 0, " +
                         "seloVerificado INTEGER NOT NULL DEFAULT 0, " +
                         "co2Evitado REAL NOT NULL DEFAULT 0.0, " +
-                        "denunciasProcedentes REAL NOT NULL DEFAULT 0.0, " + // <<< VÍRGULA REMOVIDA DAQUI
+                        "denunciasProcedentes REAL NOT NULL DEFAULT 0.0, " +
                         "FOREIGN KEY(usuarioId) REFERENCES usuarios(id)" +
                         ");",
 
@@ -100,8 +100,8 @@ public class SetupDAO {
                         "massaEstimada REAL NOT NULL, " +
                         "precoBase REAL NOT NULL, " +
                         "idVendedor INTEGER NOT NULL, " +
-                        "material_nome TEXT NOT NULL, " + // Para simplicidade, armazenamos o nome
-                        "defeito_nome TEXT, " +         // Para simplicidade, armazenamos o nome
+                        "material_nome TEXT NOT NULL, " +
+                        "defeito_nome TEXT, " +
                         "gwpBase REAL NOT NULL, " +
                         "gwpAvoided REAL NOT NULL, " +
                         "ciclo INTEGER NOT NULL, " +
@@ -158,7 +158,7 @@ public class SetupDAO {
             System.out.println("Tabelas criadas com sucesso (ou já existentes).");
         } catch (SQLException e) {
             System.err.println("Erro ao criar tabelas: " + e.getMessage());
-            e.printStackTrace(); // Ajuda a ver o erro mais detalhado
+            e.printStackTrace();
         }
     }
 
