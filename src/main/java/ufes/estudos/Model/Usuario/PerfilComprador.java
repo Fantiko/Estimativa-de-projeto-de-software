@@ -5,13 +5,15 @@ import java.util.List;
 
 public class PerfilComprador extends Usuario {
 
-    // --- CAMPOS MODIFICADOS ---
+    
     private NivelReputacao nivelReputacao;
     private double totalEstrelas;
-    // --- FIM DA MODIFICAÇÃO ---
+    
 
     private int comprasFinalizadas;
-    private List<String> insigniasPermanentes = new ArrayList<>();
+
+
+    private List<Insignia> insigniasPermanentes = new ArrayList<>();
     private boolean seloVerificado;
     private double CO2Evitado;
     private double estatisticaDenunciasProcedentes;
@@ -23,7 +25,10 @@ public class PerfilComprador extends Usuario {
         this.comprasFinalizadas = 0;
     }
 
-    // --- MÉTODOS GET/SET CORRIGIDOS ---
+    public PerfilComprador(){
+
+    }
+
     public double getTotalEstrelas() {
         return totalEstrelas;
     }
@@ -58,11 +63,11 @@ public class PerfilComprador extends Usuario {
         this.CO2Evitado = CO2Evitado;
     }
 
-    public List<String> getInsigniasPermanentes() {
+    public List<Insignia> getInsigniasPermanentes() {
         return insigniasPermanentes;
     }
 
-    public void setInsigniasPermanentes(List<String> insigniasPermanentes) {
+    public void setInsigniasPermanentes(List<Insignia> insigniasPermanentes) {
         this.insigniasPermanentes = insigniasPermanentes;
     }
 
@@ -81,4 +86,5 @@ public class PerfilComprador extends Usuario {
     public void setSeloVerificado(boolean seloVerificado) {
         this.seloVerificado = seloVerificado;
     }
+
 }

@@ -5,6 +5,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -41,15 +42,20 @@ public class TelaGerenciarOfertas extends JInternalFrame implements IGerenciarOf
     }
 
     @Override
-    public void atualizarTabela(List<Oferta> ofertas) {
+    public void atualizarTabela(List<Object[]> dadosLinhas) {
         tableModel.setRowCount(0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        for (Oferta o : ofertas) {
+        for (Object[] linha : dadosLinhas) {
+            String idcItem = (String) linha[0];
+            String nomeComprador = (String) linha[1];
+            double valor = (double) linha[2];
+            LocalDateTime data = (LocalDateTime) linha[3];
+
             tableModel.addRow(new Object[]{
-                    o.getIdcItem(),
-                    o.getNomeComprador(),
-                    String.format("%.2f", o.getValorOfertado()),
-                    o.getDataOferta().format(formatter)
+                    idcItem,
+                    nomeComprador,
+                    String.format("%.2f", valor),
+                    data.format(formatter)
             });
         }
     }

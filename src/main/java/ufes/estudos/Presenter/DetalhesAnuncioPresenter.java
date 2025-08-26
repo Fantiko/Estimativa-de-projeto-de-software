@@ -1,9 +1,11 @@
 package ufes.estudos.Presenter;
 
+import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager;
 import ufes.estudos.Model.Item.Item;
 import ufes.estudos.Views.IDetalhesAnuncioView;
 import ufes.estudos.observer.Observer;
-import ufes.estudos.repository.AnuncioRepository;
+import ufes.estudos.repository.RepositoriesIntefaces.AnuncioRepository;
+import ufes.estudos.repository.RepositoriesSQLite.AnuncioSQLiteRepository;
 
 import javax.swing.JOptionPane;
 
@@ -15,7 +17,7 @@ public class DetalhesAnuncioPresenter implements Observer {
     public DetalhesAnuncioPresenter(IDetalhesAnuncioView view, Item item) {
         this.view = view;
         this.itemOriginal = item;
-        this.anuncioRepository = AnuncioRepository.getInstance();
+        this.anuncioRepository = new AnuncioSQLiteRepository(new SQLiteConnectionManager());
         this.anuncioRepository.addObserver(this); // Observa mudanças no repositório
 
         this.view.exibirAnuncio(item);
@@ -45,7 +47,7 @@ public class DetalhesAnuncioPresenter implements Observer {
                     dadosEditadosDaView.getEstadoConservacao(),
                     dadosEditadosDaView.getMassaEstimada(),
                     dadosEditadosDaView.getPrecoBase(),
-                    this.itemOriginal.getNomeVendedor(),    // Passa o nome do vendedor original
+                    this.itemOriginal.getIdVendedor(),    // Passa o nome do vendedor original
                     this.itemOriginal.getGwpBase(),         // <<< Passa o gwpBase original
                     this.itemOriginal.getGwpAvoided()       // <<< Passa o gwpAvoided original
             );

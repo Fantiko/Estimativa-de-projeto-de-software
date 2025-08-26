@@ -1,11 +1,13 @@
 package ufes.estudos.Presenter;
 
+import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager;
 import ufes.estudos.Model.Item.Item;
 import ufes.estudos.Model.Usuario.Usuario; // IMPORT ADICIONADO
 import ufes.estudos.Views.TelaDetalhesAnuncio;
 import ufes.estudos.Views.TelaGerenciarAnuncios;
 import ufes.estudos.observer.Observer;
-import ufes.estudos.repository.AnuncioRepository;
+import ufes.estudos.repository.RepositoriesIntefaces.AnuncioRepository;
+import ufes.estudos.repository.RepositoriesSQLite.AnuncioSQLiteRepository;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -21,7 +23,7 @@ public class GerenciarAnunciosPresenter implements Observer {
     public GerenciarAnunciosPresenter(TelaGerenciarAnuncios view, Usuario usuario) { // PARÂMETRO ADICIONADO
         this.view = view;
         this.usuario = usuario; // ATRIBUIÇÃO ADICIONADA
-        this.anuncioRepository = AnuncioRepository.getInstance();
+        this.anuncioRepository = new AnuncioSQLiteRepository(new SQLiteConnectionManager());
         this.anuncioRepository.addObserver(this);
 
         // ... (Listeners da tabela e dos botões permanecem iguais)
@@ -53,7 +55,7 @@ public class GerenciarAnunciosPresenter implements Observer {
         int selectedRow = view.getTabelaAnuncios().getSelectedRow();
         if (selectedRow >= 0) {
             String idc = (String) view.getTabelaAnuncios().getValueAt(selectedRow, 0);
-            Item itemSelecionado = anuncioRepository.findByIdc(idc);
+            Item itemSelecionado = anuncioRepository.findByIdc(idc).orElse(null);
 
             if (itemSelecionado != null) {
                 TelaDetalhesAnuncio detalhesView = new TelaDetalhesAnuncio();
@@ -91,8 +93,8 @@ public class GerenciarAnunciosPresenter implements Observer {
 
 
     private void carregarAnuncios() {
-        // MÉTODO MODIFICADO PARA USAR O NOVO FILTRO
-        List<Item> anuncios = anuncioRepository.getAnunciosByVendedor(this.usuario.getNome());
+        // A chamada agora passa o ID do usuário, e não mais o nome
+        List<Item> anuncios = anuncioRepository.getAnunciosByVendedor(this.usuario.getId());
         view.atualizarTabela(anuncios);
     }
 

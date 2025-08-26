@@ -1,13 +1,15 @@
 package ufes.estudos.Presenter;
 
+import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager;
 import ufes.estudos.Model.Item.Item;
 import ufes.estudos.Model.transacao.Oferta;
 import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.IMinhasOfertasView;
 import ufes.estudos.Views.TelaNegociacao;
 import ufes.estudos.observer.Observer;
-import ufes.estudos.repository.AnuncioRepository;
+import ufes.estudos.repository.RepositoriesIntefaces.AnuncioRepository;
 import ufes.estudos.repository.OfertaRepository;
+import ufes.estudos.repository.RepositoriesSQLite.AnuncioSQLiteRepository;
 
 import javax.swing.*;
 import java.util.List;
@@ -23,7 +25,7 @@ public class MinhasOfertasPresenter implements Observer {
         this.view = view;
         this.comprador = comprador;
         this.ofertaRepository = OfertaRepository.getInstance();
-        this.anuncioRepository = AnuncioRepository.getInstance();
+        this.anuncioRepository = new AnuncioSQLiteRepository(new SQLiteConnectionManager());
         this.ofertaRepository.addObserver(this);
 
         this.view.setAlterarListener(e -> alterarOferta());
@@ -34,18 +36,13 @@ public class MinhasOfertasPresenter implements Observer {
 
     private void carregarMinhasOfertas() {
         List<Oferta> minhasOfertas = ofertaRepository.getOfertas().stream()
-                .filter(o -> o.getNomeComprador().equals(comprador.getNome()))
+                .filter(o -> o.getIdComprador() == comprador.getId())
                 .collect(Collectors.toList());
         view.atualizarTabela(minhasOfertas);
     }
 
     private void cancelarOferta() {
-        int selectedRow = view.getTabelaOfertas().getSelectedRow();
-        if (selectedRow < 0) {
-            view.exibirMensagem("Selecione uma oferta para cancelar.");
-            return;
-        }
-        Oferta ofertaSelecionada = getOfertaSelecionada(selectedRow);
+        Oferta ofertaSelecionada = getOfertaSelecionada();
         if (ofertaSelecionada != null) {
             ofertaRepository.removeOferta(ofertaSelecionada);
             view.exibirMensagem("Oferta cancelada com sucesso.");
@@ -53,15 +50,10 @@ public class MinhasOfertasPresenter implements Observer {
     }
 
     private void alterarOferta() {
-        int selectedRow = view.getTabelaOfertas().getSelectedRow();
-        if (selectedRow < 0) {
-            view.exibirMensagem("Selecione uma oferta para alterar.");
-            return;
-        }
-        Oferta ofertaSelecionada = getOfertaSelecionada(selectedRow);
+        Oferta ofertaSelecionada = getOfertaSelecionada();
         if (ofertaSelecionada == null) return;
 
-        Item itemOfertado = anuncioRepository.findByIdc(ofertaSelecionada.getIdcItem());
+        Item itemOfertado = anuncioRepository.findByIdc(ofertaSelecionada.getIdcItem()).orElse(null);
         if (itemOfertado == null) {
             view.exibirMensagem("Este item não está mais disponível para negociação.");
             ofertaRepository.removeOferta(ofertaSelecionada);
@@ -76,11 +68,18 @@ public class MinhasOfertasPresenter implements Observer {
         tela.setVisible(true);
     }
 
-    private Oferta getOfertaSelecionada(int selectedRow) {
+    // --- MÉTODO CORRIGIDO AQUI ---
+    private Oferta getOfertaSelecionada() {
+        int selectedRow = view.getTabelaOfertas().getSelectedRow();
+        if (selectedRow < 0) {
+            view.exibirMensagem("Selecione uma oferta.");
+            return null;
+        }
         String idc = (String) view.getTabelaOfertas().getValueAt(selectedRow, 0);
 
+        // A comparação agora é feita usando os IDs
         return ofertaRepository.getOfertas().stream()
-                .filter(o -> o.getIdcItem().equals(idc) && o.getNomeComprador().equals(comprador.getNome()))
+                .filter(o -> o.getIdcItem().equals(idc) && o.getIdComprador() == comprador.getId())
                 .findFirst().orElse(null);
     }
 

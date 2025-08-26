@@ -1,16 +1,17 @@
 package ufes.estudos.repository;
 
+import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager;
 import ufes.estudos.Model.eventos.EventoTimeline;
-import java.util.ArrayList;
+import ufes.estudos.dao.TimelineDAO;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TimelineRepository {
     private static TimelineRepository instance;
-    private final List<EventoTimeline> eventos;
+    private final TimelineDAO timelineDAO;
 
     private TimelineRepository() {
-        this.eventos = new ArrayList<>();
+        this.timelineDAO = new TimelineDAO(new SQLiteConnectionManager());
     }
 
     public static TimelineRepository getInstance() {
@@ -21,13 +22,11 @@ public class TimelineRepository {
     }
 
     public void addEvento(EventoTimeline evento) {
-        this.eventos.add(evento);
-        System.out.println("Novo evento na Timeline: " + evento.getTipoEvento() + " para o item " + evento.getIdcItem());
+        timelineDAO.insert(evento);
+        System.out.println("Novo evento na Timeline (DB): " + evento.getTipoEvento() + " para o item " + evento.getIdcItem());
     }
 
     public List<EventoTimeline> getTimelineParaItem(String idcItem) {
-        return eventos.stream()
-                .filter(e -> e.getIdcItem().equals(idcItem))
-                .collect(Collectors.toList());
+        return timelineDAO.getByItemId(idcItem);
     }
 }

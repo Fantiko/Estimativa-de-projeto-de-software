@@ -1,41 +1,56 @@
 package ufes.estudos.Presenter;
 
+import ufes.estudos.Bd.connectionManager.SQLiteConnectionManager;
 import ufes.estudos.Model.Item.Item;
-import ufes.estudos.Model.Usuario.Usuario; // IMPORT ADICIONADO
+import ufes.estudos.Model.Usuario.Usuario;
 import ufes.estudos.Views.ICatalogoView;
 import ufes.estudos.Views.TelaNegociacao;
-import ufes.estudos.repository.AnuncioRepository;
+import ufes.estudos.repository.RepositoriesIntefaces.AnuncioRepository;
+import ufes.estudos.repository.RepositoriesIntefaces.UsuarioRepository;
+import ufes.estudos.repository.RepositoriesSQLite.AnuncioSQLiteRepository;
+import ufes.estudos.repository.RepositoriesSQLite.UsuarioSQLiteRepository; // <<< IMPORT CORRIGIDO
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CatalogoPresenter {
     private final ICatalogoView view;
     private final AnuncioRepository anuncioRepository;
-    private final Usuario usuario; // CAMPO ADICIONADO
+    private final UsuarioRepository usuarioRepository;
+    private final Usuario usuario;
 
-    public CatalogoPresenter(ICatalogoView view, Usuario usuario) { // PARÂMETRO ADICIONADO
+    public CatalogoPresenter(ICatalogoView view, Usuario usuario) {
         this.view = view;
-        this.usuario = usuario; // ATRIBUIÇÃO ADICIONADA
-        this.anuncioRepository = AnuncioRepository.getInstance();
+        this.usuario = usuario;
+        this.anuncioRepository = new AnuncioSQLiteRepository(new SQLiteConnectionManager());
+
+        // <<< INSTANCIAÇÃO CORRIGIDA >>>
+        this.usuarioRepository = new UsuarioSQLiteRepository(new SQLiteConnectionManager());
 
         carregarCatalogo();
-
-        this.view.setComprarListener(e -> comprarItemSelecionado());
+        this.view.setComprarListener(e -> abrirTelaDeNegociacao());
+        // O botão de histórico ainda é um placeholder, podemos implementá-lo depois
         this.view.setHistoricoListener(e -> view.exibirMensagem("Funcionalidade 'Histórico de Compras' ainda não implementada."));
     }
 
     private void carregarCatalogo() {
+        // 1. Busca todos os usuários uma vez e cria um mapa de ID para Nome
+        Map<Integer, String> mapaNomesVendedores = usuarioRepository.buscarTodos().stream()
+                .collect(Collectors.toMap(Usuario::getId, Usuario::getNome));
+
         List<Item> todosAnuncios = anuncioRepository.getAnuncios();
         List<Object[]> dadosParaTabela = new ArrayList<>();
 
         for (Item item : todosAnuncios) {
-            // AQUI ESTÁ O FILTRO: Pula o item se o nome do vendedor for igual ao do usuário logado
-            if (item.getNomeVendedor().equals(this.usuario.getNome())) {
-                continue; // Pula para a próxima iteração do loop
+            if (item.getIdVendedor() == this.usuario.getId()) {
+                continue; // Pula os itens do próprio usuário
             }
+
+            // 2. Usa o mapa para buscar o nome do vendedor pelo ID
+            String nomeVendedor = mapaNomesVendedores.getOrDefault(item.getIdVendedor(), "Desconhecido");
 
             double precoFinal = item.getPrecoBase() * (1 - item.getDefeito().getPercentual());
             double mci = 1 - item.getDefeito().getPercentual();
@@ -43,7 +58,7 @@ public class CatalogoPresenter {
             dadosParaTabela.add(new Object[]{
                     item.getIdentificadorCircular(),
                     item.getTipoPeca(),
-                    item.getNomeVendedor(),
+                    nomeVendedor,
                     String.format("%.2f", precoFinal),
                     String.format("%.2f", mci),
                     String.format("%.4f", item.getGwpAvoided())
@@ -52,9 +67,7 @@ public class CatalogoPresenter {
         view.atualizarTabela(dadosParaTabela);
     }
 
-    // Dentro da classe CatalogoPresenter
-
-    private void comprarItemSelecionado() {
+    private void abrirTelaDeNegociacao() {
         int selectedRow = view.getTabelaCatalogo().getSelectedRow();
         if (selectedRow < 0) {
             view.exibirMensagem("Por favor, selecione um item para fazer uma oferta.");
@@ -62,42 +75,23 @@ public class CatalogoPresenter {
         }
 
         String idc = (String) view.getTabelaCatalogo().getValueAt(selectedRow, 0);
-        // Precisamos do objeto Item completo
-        Item itemSelecionado = anuncioRepository.findByIdc(idc);
+
+        // --- CORREÇÃO AQUI ---
+        // O método findByIdc já retorna o Item ou null, então removemos o .orElse(null)
+        Item itemSelecionado = anuncioRepository.findByIdc(idc).orElse(null);
 
         if (itemSelecionado == null) {
-            view.exibirMensagem("Erro: Item não encontrado.");
+            view.exibirMensagem("Erro: Item não encontrado ou não está mais disponível.");
+            carregarCatalogo(); // Atualiza a tabela para remover o item
             return;
         }
 
-        // Precisamos do preço final que está na tabela
         String precoFinalStr = (String) view.getTabelaCatalogo().getValueAt(selectedRow, 3);
         double precoFinal = Double.parseDouble(precoFinalStr.replace(',', '.'));
 
-        // Acessa a MainView para ser a "mãe" do JDialog
         JFrame framePrincipal = (JFrame) SwingUtilities.getWindowAncestor((JComponent) view);
-
         TelaNegociacao tela = new TelaNegociacao(framePrincipal);
         new NegociacaoPresenter(tela, itemSelecionado, this.usuario, precoFinal);
         tela.setVisible(true);
-    }
-
-    private double calcularDescontoPorDefeito(String defeito) {
-        Map<String, Double> mapaDescontos = Map.of(
-                "Rasgo estruturante", 0.30,
-                "Mancha permanente", 0.20,
-                "Zíper parcialmente funcional", 0.25,
-                "Sola sem relevo funcional", 0.40
-        );
-        return mapaDescontos.getOrDefault(defeito, 0.10);
-    }
-
-    private double simularMCI(String estado) {
-        return switch (estado) {
-            case "Muito Usado" -> 0.85;
-            case "Usado" -> 0.60;
-            case "Novo" -> 0.30;
-            default -> 0.50;
-        };
     }
 }
