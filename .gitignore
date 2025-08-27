@@ -39,3 +39,4 @@ build/
 .idea/material_theme_project_new.xml
 .idea/misc.xml
 
+src/main/java/ufes/estudos/Bd/loja.db
