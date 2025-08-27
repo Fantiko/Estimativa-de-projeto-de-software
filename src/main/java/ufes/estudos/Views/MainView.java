@@ -187,11 +187,19 @@ public class MainView extends JFrame implements IMainView {
         // Por ora, ele verá o perfil de vendedor se tiver um.
         btnMeuPerfil.addActionListener(getAbrirPerfilListener(usuario, new VendedorState()));
 
-        abrirInternalFrame("Menu Administrador",
-                btnAprovar,
-                btnMeuPerfil, // <<< BOTÃO ADICIONADO AQUI
-                new JButton("Visualizar Logs")
-        );
+        // Dentro do método exibirMenuAdmin() em MainView.java
+
+        JButton btnLogs = new JButton("Visualizar Logs do Sistema");
+        btnLogs.addActionListener(e -> {
+            TelaLogView tela = new TelaLogView();
+            new LogViewPresenter(tela);
+            desktopPane.add(tela);
+            tela.setVisible(true);
+        });
+
+        // E atualize a chamada final
+        abrirInternalFrame("Menu Administrador", btnAprovar, btnMeuPerfil, btnLogs);
+
     }
 
     private void abrirInternalFrame(String titulo, JComponent... componentes) {

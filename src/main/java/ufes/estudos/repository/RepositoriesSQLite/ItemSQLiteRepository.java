@@ -50,7 +50,7 @@ public class ItemSQLiteRepository implements ItemRepository {
                 stmt.setInt(9, item.getCiclo());
                 stmt.setDouble(10, item.getGwpBase());
                 stmt.setDouble(11, item.getGwpAvoided());
-                stmt.setInt(12, item.getIdVendedor());
+                stmt.setInt(12, item.getVendedorId());
                 stmt.setInt(13, item.getMaterial().getId());
 
                 int affectedRows = stmt.executeUpdate();
@@ -118,7 +118,7 @@ public class ItemSQLiteRepository implements ItemRepository {
             stmt.setInt(8, item.getCiclo());
             stmt.setDouble(9, item.getGwpBase());
             stmt.setDouble(10, item.getGwpAvoided());
-            stmt.setInt(11, item.getIdVendedor());
+            stmt.setInt(11, item.getVendedorId());
             stmt.setInt(12, item.getMaterial().getId());
             stmt.setString(13, item.getIdentificadorCircular());
 
@@ -170,7 +170,7 @@ public class ItemSQLiteRepository implements ItemRepository {
                 item.setEstadoConservacao(rs.getString("estadoConservacao"));
                 item.setMassaEstimada(rs.getDouble("massaEstimada"));
                 item.setPrecoBase(rs.getDouble("precoBase"));
-                item.setIdVendedor(rs.getInt("vendedorId"));
+                item.setVendedorId(rs.getInt("vendedorId"));
                 item.setGwpBase(rs.getDouble("gwpBase"));
                 item.setGwpAvoided(rs.getDouble("gwpAvoided"));
                 item.setCiclo(rs.getInt("ciclo"));
@@ -258,7 +258,7 @@ public class ItemSQLiteRepository implements ItemRepository {
             item.setEstadoConservacao(rs.getString("estadoConservacao"));
             item.setMassaEstimada(rs.getDouble("massaEstimada"));
             item.setPrecoBase(rs.getDouble("precoBase"));
-            item.setIdVendedor(rs.getInt("vendedorId"));
+            item.setVendedorId(rs.getInt("vendedorId"));
             item.setGwpBase(rs.getDouble("gwpBase"));
             item.setGwpAvoided(rs.getDouble("gwpAvoided"));
             item.setCiclo(rs.getInt("ciclo"));

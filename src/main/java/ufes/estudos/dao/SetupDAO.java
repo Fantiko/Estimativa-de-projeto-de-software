@@ -99,12 +99,13 @@ public class SetupDAO {
                         "estadoConservacao TEXT NOT NULL, " +
                         "massaEstimada REAL NOT NULL, " +
                         "precoBase REAL NOT NULL, " +
-                        "idVendedor INTEGER NOT NULL, " +
+                        "idVendedor INTEGER NOT NULL, " + // A coluna no item
                         "material_nome TEXT NOT NULL, " +
                         "defeito_nome TEXT, " +
                         "gwpBase REAL NOT NULL, " +
                         "gwpAvoided REAL NOT NULL, " +
                         "ciclo INTEGER NOT NULL, " +
+                        // A chave estrangeira 'idVendedor' desta tabela se refere à coluna 'id' da tabela 'usuarios'
                         "FOREIGN KEY(idVendedor) REFERENCES usuarios(id)" +
                         ");",
 

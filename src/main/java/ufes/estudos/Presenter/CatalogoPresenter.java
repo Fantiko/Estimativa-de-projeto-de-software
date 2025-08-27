@@ -45,12 +45,12 @@ public class CatalogoPresenter {
         List<Object[]> dadosParaTabela = new ArrayList<>();
 
         for (Item item : todosAnuncios) {
-            if (item.getIdVendedor() == this.usuario.getId()) {
+            if (item.getVendedorId() == this.usuario.getId()) {
                 continue; // Pula os itens do próprio usuário
             }
 
             // 2. Usa o mapa para buscar o nome do vendedor pelo ID
-            String nomeVendedor = mapaNomesVendedores.getOrDefault(item.getIdVendedor(), "Desconhecido");
+            String nomeVendedor = mapaNomesVendedores.getOrDefault(item.getVendedorId(), "Desconhecido");
 
             double precoFinal = item.getPrecoBase() * (1 - item.getDefeito().getPercentual());
             double mci = 1 - item.getDefeito().getPercentual();

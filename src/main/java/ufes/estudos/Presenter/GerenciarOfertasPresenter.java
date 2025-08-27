@@ -15,6 +15,7 @@ import ufes.estudos.repository.PerfilRepository;
 import ufes.estudos.repository.RepositoriesIntefaces.UsuarioRepository;
 import ufes.estudos.repository.RepositoriesSQLite.*;
 import ufes.estudos.repository.VendaRepository;
+import ufes.estudos.service.LogService;
 import ufes.estudos.service.PerfilCompradorService;
 import ufes.estudos.service.PerfilVendedorService;
 import ufes.estudos.service.ReputacaoService;
@@ -106,6 +107,8 @@ public class GerenciarOfertasPresenter implements Observer {
         // REGISTRA A VENDA
         Venda novaVenda = new Venda(itemVendido.getIdentificadorCircular(), compradorUsuario.getNome(), vendedorUsuario.getNome(), ofertaGanhadora.getValorOfertado(), gwpEvitado);
         vendaRepository.addVenda(novaVenda);
+        // --- LOG DE SUCESSO ---
+        LogService.getInstance().getLogger().logSucesso("Conclusão da transação", itemVendido.getIdentificadorCircular(), "Venda", vendedorUsuario);
 
         // ATRIBUI REPUTAÇÃO (que também salva no banco através do ReputacaoService)
         ReputacaoService.getInstance().processarVendaConcluida(vendedorUsuario.getNome(), compradorUsuario.getNome());

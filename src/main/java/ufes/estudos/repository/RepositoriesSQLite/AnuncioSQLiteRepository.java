@@ -43,7 +43,7 @@ public class AnuncioSQLiteRepository extends Subject implements AnuncioRepositor
     @Override
     public List<Item> getAnunciosByVendedor(int idVendedor) {
         return getAnuncios().stream()
-                .filter(item -> item.getIdVendedor() == idVendedor)
+                .filter(item -> item.getVendedorId() == idVendedor)
                 .collect(Collectors.toList());
     }
 

@@ -17,6 +17,7 @@ import ufes.estudos.repository.RepositoriesSQLite.DefeitoSQLiteRepository;
 import ufes.estudos.repository.RepositoriesSQLite.MaterialSQLiteRepository;
 import ufes.estudos.repository.TimelineRepository;
 import ufes.estudos.service.IdService;
+import ufes.estudos.service.LogService;
 import ufes.estudos.service.ReputacaoService;
 
 import java.awt.event.ActionEvent;
@@ -110,6 +111,10 @@ public class AdicionarAnuncioPresenter {
 
             anuncioRepository.addAnuncio(novoItem);
 
+            // --- LOG DE SUCESSO ---
+            LogService.getInstance().getLogger().logSucesso("Criação de item", novoItem.getIdentificadorCircular(), novoItem.getTipoPeca(), usuario);
+
+
             double mci = 1 - defeitoSelecionado.getPercentual();
             String detalhes = "Item publicado pelo vendedor " + usuario.getNome() + ". Ciclo: " + novoItem.getCiclo();
             TimelineRepository.getInstance().addEvento(new EventoTimeline(novoItem.getIdentificadorCircular(), TipoEvento.PUBLICADO, novoItem.getGwpAvoided(), mci, detalhes));
@@ -119,6 +124,8 @@ public class AdicionarAnuncioPresenter {
             view.fechar();
 
         } catch (Exception ex) {
+            // --- LOG DE FALHA ---
+            LogService.getInstance().getLogger().logFalha("Criação de item", ex.getMessage(), "Novo Item", usuario, "");
             view.exibirMensagem("Erro ao salvar o anúncio. Verifique os dados inseridos.");
             ex.printStackTrace();
         }

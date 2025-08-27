@@ -59,7 +59,10 @@ public class GerenciarAnunciosPresenter implements Observer {
 
             if (itemSelecionado != null) {
                 TelaDetalhesAnuncio detalhesView = new TelaDetalhesAnuncio();
-                new DetalhesAnuncioPresenter(detalhesView, itemSelecionado);
+
+                // --- CORREÇÃO AQUI ---
+                // Agora passamos o 'this.usuario', que é o usuário logado neste painel
+                new DetalhesAnuncioPresenter(detalhesView, itemSelecionado, this.usuario);
 
                 JDesktopPane desktopPane = view.getDesktopPane();
                 desktopPane.add(detalhesView);

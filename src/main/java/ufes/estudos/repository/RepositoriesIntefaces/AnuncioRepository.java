@@ -7,10 +7,13 @@ import java.util.Optional;
 
 public interface AnuncioRepository {
     void addAnuncio(Item item);
-    void updateAnuncio(Item item); // <<< ADICIONE ESTA LINHA
+    void updateAnuncio(Item item);
     void deleteAnuncio(String idc);
     Optional<Item> findByIdc(String idc);
     List<Item> getAnuncios();
     List<Item> getAnunciosByVendedor(int idVendedor);
     void addObserver(Observer observer);
+
+    // --- MÉTODO ADICIONADO AQUI ---
+    void removeObserver(Observer observer);
 }

@@ -13,15 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemDAO {
-    private final SQLiteConnectionManager connectionManager;
 
     public ItemDAO(SQLiteConnectionManager connectionManager) {
-        this.connectionManager = connectionManager;
     }
 
     public void insert(Item item) {
         String sql = "INSERT INTO itens (identificadorCircular, tipoPeca, subcategoria, tamanho, corPredominante, " +
-                "estadoConservacao, massaEstimada, precoBase, idVendedor, material_nome, defeito_nome, gwpBase, gwpAvoided, ciclo) " +
+                "estadoConservacao, massaEstimada, precoBase, vendedorId, material_nome, defeito_nome, gwpBase, gwpAvoided, ciclo) " +
                 "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try (Connection conn = SQLiteConnectionManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -33,7 +31,7 @@ public class ItemDAO {
             stmt.setString(6, item.getEstadoConservacao());
             stmt.setDouble(7, item.getMassaEstimada());
             stmt.setDouble(8, item.getPrecoBase());
-            stmt.setInt(9, item.getIdVendedor());
+            stmt.setInt(9, item.getVendedorId());
             stmt.setString(10, item.getMaterial().getNome());
             stmt.setString(11, item.getDefeito().getDefeito());
             stmt.setDouble(12, item.getGwpBase());
@@ -103,7 +101,7 @@ public class ItemDAO {
                 rs.getString("estadoConservacao"),
                 rs.getDouble("massaEstimada"),
                 rs.getDouble("precoBase"),
-                rs.getInt("idVendedor"),
+                rs.getInt("vendedorId"),
                 rs.getDouble("gwpBase"),
                 rs.getDouble("gwpAvoided")
         );

@@ -1,5 +1,6 @@
 package ufes.estudos;
 
+import org.example.LogAdapter.Logger;
 import ufes.estudos.Presenter.LoginPresenter;
 import ufes.estudos.Views.TelaLogin;
 import ufes.estudos.dao.SetupDAO;

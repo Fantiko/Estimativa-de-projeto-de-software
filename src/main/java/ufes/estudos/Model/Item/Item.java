@@ -11,14 +11,14 @@ public class Item {
     private String estadoConservacao;
     private double massaEstimada;
     private double precoBase;
-    private int idVendedor; //mudou
+    private int vendedorId; //mudou
     private double gwpBase;       // CAMPO ADICIONADO
     private double gwpAvoided;
     private int ciclo;
 
     public Item(String identificadorCircular, String tipoPeca, String subcategoria, String tamanho,
                 String corPredominante, Material material, Defeito defeito, String estadoConservacao,
-                double massaEstimada, double precoBase, int idVendedor, double gwpBase, double gwpAvoided) { // PARÂMETRO ADICIONADO
+                double massaEstimada, double precoBase, int vendedorId, double gwpBase, double gwpAvoided) { // PARÂMETRO ADICIONADO
         this.identificadorCircular = identificadorCircular;
         this.tipoPeca = tipoPeca;
         this.subcategoria = subcategoria;
@@ -29,7 +29,7 @@ public class Item {
         this.estadoConservacao = estadoConservacao;
         this.massaEstimada = massaEstimada;
         this.precoBase = precoBase;
-        this.idVendedor = idVendedor; // ATRIBUIÇÃO ADICIONADA
+        this.vendedorId = vendedorId; // ATRIBUIÇÃO ADICIONADA
         this.gwpBase = gwpBase;           // ATRIBUIÇÃO ADICIONADA
         this.gwpAvoided = gwpAvoided;
         this.ciclo = 1;
@@ -76,8 +76,8 @@ public class Item {
         this.precoBase = precoBase;
     }
 
-    public void setIdVendedor(int idVendedor) {
-        this.idVendedor = idVendedor;
+    public void setVendedorId(int vendedorId) {
+        this.vendedorId = vendedorId;
     }
 
     public void setGwpBase(double gwpBase) {
@@ -103,7 +103,7 @@ public class Item {
     public String getEstadoConservacao() { return estadoConservacao; }
     public double getMassaEstimada() { return massaEstimada; }
     public double getPrecoBase() { return precoBase; }
-    public int getIdVendedor() { return idVendedor; }
+    public int getVendedorId() { return vendedorId; }
     public double getGwpBase() { return gwpBase; }         // GETTER ADICIONADO
     public double getGwpAvoided() { return gwpAvoided; }   // GETTER ADICIONADO
     public int getCiclo() { return ciclo; }
